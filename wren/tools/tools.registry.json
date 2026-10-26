@@ -998,52 +998,53 @@
     "list_comfyui_workflows": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "List the workflow JSON files saved in ComfyUI's own workflow folder, with each file's format (api, ui or invalid) and size.",
-      "parameters": {
-        "type": "object",
-        "properties": {},
-        "required": [],
-        "additionalProperties": false
-      }
-    },
-    "read_comfyui_workflow": {
-      "runs_on": "desktop",
-      "status": "advertised",
-      "description": "Read one saved ComfyUI workflow and report its nodes and its prompt text. Reports format 'ui' or 'api'; a UI-format file is readable but not runnable.",
+      "description": "List the workflow JSON files saved in ComfyUI's workflow folder, with each file's format (api, ui or invalid).",
       "parameters": {
         "type": "object",
         "properties": {
-          "name": {
+          "directory": {
             "type": "string",
-            "description": "Workflow file name, inside ComfyUI's workflow folder."
-          },
-          "path": {
-            "type": "string",
-            "description": "Absolute path inside ComfyUI's workflow folder instead of name."
+            "description": "Accepted for contract compatibility but IGNORED — the folder is fixed to ComfyUI's user/default/workflows."
           }
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
+    },
+    "read_comfyui_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Read a saved ComfyUI workflow and report its nodes and prompt text. Accepts a bare file name or an absolute path. Reports whether it is runnable.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "workflow_path": {
+            "type": "string",
+            "description": "File name inside ComfyUI's workflow folder, or an absolute path inside it."
+          }
+        },
+        "required": [
+          "workflow_path"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
     },
     "run_comfyui_workflow": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Submit an API-format ComfyUI graph to /prompt and return its prompt_id. Refuses a UI-format workflow instead of sending something ComfyUI would reject.",
+      "description": "Submit an API-format graph to ComfyUI /prompt and return its prompt_id. A UI-format workflow is refused rather than sent to fail.",
       "parameters": {
         "type": "object",
         "properties": {
           "workflow": {
             "type": "object",
-            "description": "API-format graph: {node_id: {class_type, inputs}}."
+            "description": "API-format graph: {node_id: {class_type, inputs}}. Required unless workflow_path is given."
           },
-          "name": {
+          "workflow_path": {
             "type": "string",
-            "description": "Name of a saved API-format workflow file."
-          },
-          "path": {
-            "type": "string",
-            "description": "Absolute path of a saved API-format workflow file."
+            "description": "Saved API-format workflow to run instead of an inline graph."
           },
           "client_id": {
             "type": "string",
@@ -1052,23 +1053,25 @@
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "get_comfyui_queue": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Report ComfyUI's queue: what is running and what is waiting, with prompt ids and counts.",
+      "description": "Report ComfyUI's queue: what is running and what is pending.",
       "parameters": {
         "type": "object",
         "properties": {},
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "get_comfyui_history": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Report finished ComfyUI jobs and the output image references they produced (filename, subfolder, type).",
+      "description": "Report finished ComfyUI jobs and the output image references they produced.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -1080,40 +1083,41 @@
             "type": "integer",
             "minimum": 1,
             "maximum": 200,
-            "description": "How many jobs to return (default 50)."
+            "description": "How many jobs (default 50)."
           }
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "list_comfyui_models": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "List the model files ComfyUI has on disk: checkpoints, LoRAs, VAEs and embeddings, with sizes.",
+      "description": "List the model files ComfyUI has on disk: checkpoints, LoRAs, VAEs and embeddings.",
       "parameters": {
         "type": "object",
         "properties": {
-          "kind": {
+          "type": {
             "type": "string",
             "enum": [
-              "all",
               "checkpoints",
               "loras",
               "vae",
               "embeddings"
             ],
-            "description": "Which group to list (default all)."
+            "description": "Which group; omit for all."
           }
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "list_comfyui_nodes": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "List available ComfyUI node types and their categories, or fetch one node's full input schema when a class_type is given.",
+      "description": "List available ComfyUI node types and categories, or one node's full input schema when class_type is given.",
       "parameters": {
         "type": "object",
         "properties": {
@@ -1128,26 +1132,23 @@
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "save_comfyui_workflow": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Write a workflow JSON into ComfyUI's workflow folder. Refuses to overwrite an existing file unless overwrite is true.",
+      "description": "Save a workflow JSON into ComfyUI's workflow folder. Refuses to overwrite unless overwrite is true.",
       "parameters": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "File name to write, inside ComfyUI's workflow folder."
-          },
-          "path": {
-            "type": "string",
-            "description": "Absolute path inside ComfyUI's workflow folder instead of name."
-          },
           "workflow": {
             "type": "object",
-            "description": "The workflow/graph object to save."
+            "description": "The graph to save."
+          },
+          "name": {
+            "type": "string",
+            "description": "File name to write inside the workflow folder."
           },
           "overwrite": {
             "type": "boolean",
@@ -1155,33 +1156,30 @@
           }
         },
         "required": [
-          "workflow"
+          "workflow",
+          "name"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "edit_comfyui_workflow": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Change an API-format workflow in place: swap the checkpoint or a LoRA, rewrite prompt text, set a seed, or change the output filename prefix. Any other change key is refused.",
+      "description": "Change an API-format workflow in place: swap checkpoint or LoRA, set positive/negative prompt, set a seed, or change the output prefix. Refuses a UI-format file.",
       "parameters": {
         "type": "object",
         "properties": {
-          "name": {
+          "workflow_path": {
             "type": "string",
-            "description": "Workflow file name."
-          },
-          "path": {
-            "type": "string",
-            "description": "Absolute path instead of name."
+            "description": "File name or absolute path of the API-format workflow."
           },
           "changes": {
             "type": "object",
-            "description": "Only these keys are accepted: checkpoint, lora, prompts, seed, filename_prefix.",
+            "description": "Accepted keys: checkpoint, lora{name,strength_model,strength_clip}, positive_prompt, negative_prompt, prompts[{node_id,text}], seed{node_id,value}, filename_prefix.",
             "properties": {
               "checkpoint": {
-                "type": "string",
-                "description": "New checkpoint filename for the first CheckpointLoaderSimple."
+                "type": "string"
               },
               "lora": {
                 "type": "object",
@@ -1197,6 +1195,14 @@
                   }
                 },
                 "additionalProperties": false
+              },
+              "positive_prompt": {
+                "type": "string",
+                "description": "Replaces the text of the first CLIPTextEncode node."
+              },
+              "negative_prompt": {
+                "type": "string",
+                "description": "Replaces the second CLIPTextEncode node (falls back to the first if there is only one)."
               },
               "prompts": {
                 "type": "array",
@@ -1241,29 +1247,31 @@
           }
         },
         "required": [
+          "workflow_path",
           "changes"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "upload_comfyui_image": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Push an image into ComfyUI's input folder, either from a local file path or from base64 data.",
+      "description": "Upload an input image into ComfyUI's input folder, from a local file path or from base64.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
+          "image_path": {
             "type": "string",
             "description": "Local image file to upload."
           },
           "data_base64": {
             "type": "string",
-            "description": "Image bytes as base64 (alt to path)."
+            "description": "Alternative to image_path."
           },
           "filename": {
             "type": "string",
-            "description": "Name to store it under (defaults to the file name)."
+            "description": "Name to store it under."
           },
           "subfolder": {
             "type": "string",
@@ -1276,18 +1284,19 @@
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "get_comfyui_output_image": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Fetch a generated image from ComfyUI by filename and save it locally, returning the saved path and size.",
+      "description": "Fetch a generated image from ComfyUI by filename and save it locally.",
       "parameters": {
         "type": "object",
         "properties": {
           "filename": {
             "type": "string",
-            "description": "Output filename from get_comfyui_history."
+            "description": "Output filename reported by get_comfyui_history."
           },
           "subfolder": {
             "type": "string",
@@ -1307,18 +1316,19 @@
           "filename"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "cancel_comfyui_job": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Interrupt ComfyUI's running job, or remove a queued one. With queue_only and no prompt_id, clears the pending queue.",
+      "description": "Interrupt a running ComfyUI job, or remove a queued one. With no prompt_id, interrupts the running job and clears pending.",
       "parameters": {
         "type": "object",
         "properties": {
           "prompt_id": {
             "type": "string",
-            "description": "Job to stop or remove."
+            "description": "Job to stop or remove; omit to interrupt everything."
           },
           "queue_only": {
             "type": "boolean",
@@ -1327,82 +1337,85 @@
         },
         "required": [],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "trim_video": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Cut a section out of a video with ffmpeg and write it to a new file. Give either duration_seconds or end_seconds.",
+      "description": "Trim a clip to a start/end range with ffmpeg. If output_path is omitted the result is written beside the source as <name>_trimmed.mp4.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
+          "video_path": {
             "type": "string",
-            "description": "Source video (must exist, under an allowed root)."
+            "description": "Source video under an allowed root."
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start offset in seconds."
+          },
+          "end": {
+            "type": "number",
+            "description": "End offset in seconds (or pass duration instead)."
+          },
+          "duration": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Length to keep, if no end."
           },
           "output_path": {
             "type": "string",
-            "description": "Where to write the trimmed video."
-          },
-          "start_seconds": {
-            "type": "number",
-            "minimum": 0,
-            "description": "Start offset (default 0)."
-          },
-          "duration_seconds": {
-            "type": "number",
-            "exclusiveMinimum": 0,
-            "description": "Length to keep."
-          },
-          "end_seconds": {
-            "type": "number",
-            "description": "End offset, if no duration is given."
+            "description": "Where to write it (optional)."
           }
         },
         "required": [
-          "path",
-          "output_path"
+          "video_path",
+          "start",
+          "end"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "concat_video": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Join two or more video files into one, in the order given, using ffmpeg's concat demuxer.",
+      "description": "Join two or more clips in order with ffmpeg. If output_path is omitted the result is written beside the first clip as <name>_joined.mp4.",
       "parameters": {
         "type": "object",
         "properties": {
-          "paths": {
+          "video_paths": {
             "type": "array",
             "minItems": 2,
             "items": {
               "type": "string"
             },
-            "description": "Videos to join, in order."
+            "description": "Clips to join, in order."
           },
           "output_path": {
             "type": "string",
-            "description": "Where to write the joined video."
+            "description": "Where to write it (optional)."
           }
         },
         "required": [
-          "paths",
-          "output_path"
+          "video_paths"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "search_music_catalog": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Search the Fortress song catalog (43 song files) by title or lyric text and return matching songs with a snippet.",
+      "description": "Search the Fortress song catalog (43 songs) by title or lyric text.",
       "parameters": {
         "type": "object",
         "properties": {
           "query": {
             "type": "string",
-            "description": "Text to look for; empty returns the first N songs."
+            "description": "Text to look for."
           },
           "limit": {
             "type": "integer",
@@ -1411,91 +1424,68 @@
             "description": "Maximum matches (default 20)."
           }
         },
-        "required": [],
+        "required": [
+          "query"
+        ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "create_pdf": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Create a PDF from a title and paragraphs, by building a document and converting it with LibreOffice.",
+      "description": "Create a PDF from markdown or plain text, by building a document and converting it with LibreOffice.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
+          "content": {
+            "type": "string",
+            "description": "Markdown or plain text. '# ' becomes the title, '## ' headings, '- ' bullets."
+          },
+          "output_path": {
             "type": "string",
             "description": "Where to write the .pdf."
-          },
-          "title": {
-            "type": "string",
-            "description": "Document heading."
-          },
-          "paragraphs": {
-            "type": "array",
-            "items": {
-              "description": "A string, or {text, style:'heading', level}, or {bullets:[...]}"
-            }
           }
         },
         "required": [
-          "path"
+          "content",
+          "output_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "create_docx": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Create a Word document from a title, paragraphs (strings or {heading, level} or {bullets}), and optional tables.",
+      "description": "Create a Word document from markdown or plain text.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
+          "content": {
+            "type": "string",
+            "description": "Markdown or plain text."
+          },
+          "output_path": {
             "type": "string",
             "description": "Where to write the .docx."
-          },
-          "title": {
-            "type": "string",
-            "description": "Document heading."
-          },
-          "paragraphs": {
-            "type": "array",
-            "items": {
-              "description": "A string, or {text, style:'heading', level}, or {bullets:[...]}"
-            }
-          },
-          "tables": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "rows": {
-                  "type": "array",
-                  "items": {
-                    "type": "array"
-                  }
-                }
-              }
-            }
           }
         },
         "required": [
-          "path"
+          "content",
+          "output_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "create_spreadsheet": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Create an .xlsx workbook from one or more sheets, each a name and a list of rows.",
+      "description": "Create an .xlsx workbook from one or more sheets.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
-            "type": "string",
-            "description": "Where to write the .xlsx."
-          },
           "sheets": {
             "type": "array",
             "items": {
@@ -1516,25 +1506,27 @@
               ],
               "additionalProperties": false
             }
+          },
+          "output_path": {
+            "type": "string",
+            "description": "Where to write the .xlsx."
           }
         },
         "required": [
-          "path"
+          "sheets",
+          "output_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "create_presentation": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Create a .pptx deck from a list of slides, each with a title and bullet lines.",
+      "description": "Create a .pptx deck. Each slide's body is split on newlines into bullets.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
-            "type": "string",
-            "description": "Where to write the .pptx."
-          },
           "slides": {
             "type": "array",
             "minItems": 1,
@@ -1544,11 +1536,8 @@
                 "title": {
                   "type": "string"
                 },
-                "bullets": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                "body": {
+                  "type": "string"
                 }
               },
               "required": [
@@ -1556,107 +1545,117 @@
               ],
               "additionalProperties": false
             }
+          },
+          "output_path": {
+            "type": "string",
+            "description": "Where to write the .pptx."
           }
         },
         "required": [
-          "path",
-          "slides"
+          "slides",
+          "output_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     },
     "deploy_website": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Publish a site with vercel (production by default) or wrangler, in the given directory, and return the deployed URL. Requires Chrissy's approval.",
+      "description": "Publish a site and return its URL. Requires Chrissy's approval (kernel execution grant). NOTE: netlify CLI is NOT installed on FORTRESS; only vercel and wrangler exist.",
       "parameters": {
         "type": "object",
         "properties": {
-          "path": {
+          "project_path": {
             "type": "string",
-            "description": "Site directory (under an allowed root)."
+            "description": "Site directory under an allowed root."
           },
-          "provider": {
+          "platform": {
             "type": "string",
             "enum": [
               "vercel",
-              "cloudflare"
+              "netlify"
             ],
-            "description": "Which CLI to deploy with."
+            "description": "Which CLI to deploy with. cloudflare is also accepted."
           },
           "prod": {
             "type": "boolean",
-            "description": "Production deploy for vercel (default true)."
+            "description": "Production deploy (default true)."
           }
         },
         "required": [
-          "path",
-          "provider"
+          "project_path",
+          "platform"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "git_checkout": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Switch a repository to an existing branch. Requires Chrissy's approval; refused without a kernel execution grant.",
+      "description": "Switch a repository to an existing branch. Requires Chrissy's approval.",
       "parameters": {
         "type": "object",
         "properties": {
-          "cwd": {
+          "repo_path": {
             "type": "string",
-            "description": "Repository directory (must contain .git and sit under an allowed root)."
+            "description": "Repository directory containing .git, under an allowed root."
           },
           "branch": {
             "type": "string",
             "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
-            "description": "Existing branch name."
+            "description": "Existing branch."
           }
         },
         "required": [
-          "cwd",
+          "repo_path",
           "branch"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "git_branch": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Create a branch and switch to it, optionally from a starting ref. Requires Chrissy's approval.",
+      "description": "List branches, or create one and switch to it. Requires Chrissy's approval.",
       "parameters": {
         "type": "object",
         "properties": {
-          "cwd": {
+          "repo_path": {
             "type": "string",
             "description": "Repository directory."
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "create"
+            ],
+            "description": "Default: create when name is given, list otherwise."
           },
           "name": {
             "type": "string",
             "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
-            "description": "New branch name."
-          },
-          "from": {
-            "type": "string",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
-            "description": "Starting branch or ref."
+            "description": "New branch name, for action=create."
           }
         },
         "required": [
-          "cwd",
-          "name"
+          "repo_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "git_merge": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Merge one branch into the current one with --no-edit. Requires Chrissy's approval.",
+      "description": "Merge a branch into the current one with --no-edit. Requires Chrissy's approval.",
       "parameters": {
         "type": "object",
         "properties": {
-          "cwd": {
+          "repo_path": {
             "type": "string",
             "description": "Repository directory."
           },
@@ -1667,11 +1666,12 @@
           }
         },
         "required": [
-          "cwd",
+          "repo_path",
           "branch"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "git_push": {
       "runs_on": "desktop",
@@ -1680,26 +1680,25 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "cwd": {
+          "repo_path": {
             "type": "string",
             "description": "Repository directory."
           },
           "remote": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,60}$",
             "description": "Remote name (default origin)."
           },
           "branch": {
             "type": "string",
-            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
             "description": "Branch to push (default current)."
           }
         },
         "required": [
-          "cwd"
+          "repo_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "git_pull": {
       "runs_on": "desktop",
@@ -1708,7 +1707,7 @@
       "parameters": {
         "type": "object",
         "properties": {
-          "cwd": {
+          "repo_path": {
             "type": "string",
             "description": "Repository directory."
           },
@@ -1722,23 +1721,24 @@
           }
         },
         "required": [
-          "cwd"
+          "repo_path"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": true
     },
     "query_local_database": {
       "runs_on": "desktop",
       "status": "advertised",
-      "description": "Run one read-only SELECT/WITH query against an allowlisted local sqlite database and return columns and rows. Refuses anything that could write, including PRAGMA and ATTACH.",
+      "description": "Run one read-only SELECT/WITH query against an allowlisted local sqlite database. Refuses PRAGMA, ATTACH, written statements and stacked statements.",
       "parameters": {
         "type": "object",
         "properties": {
-          "database": {
+          "database_path": {
             "type": "string",
             "description": "One of the three allowlisted FortressTerminal sqlite files."
           },
-          "sql": {
+          "query": {
             "type": "string",
             "description": "A single SELECT or WITH statement."
           },
@@ -1750,11 +1750,12 @@
           }
         },
         "required": [
-          "database",
-          "sql"
+          "database_path",
+          "query"
         ],
         "additionalProperties": false
-      }
+      },
+      "gated": false
     }
   },
   "version": 4
