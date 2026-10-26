@@ -445,14 +445,26 @@ def record_result(owner: str, auth_kind: str, envelope: Dict[str, Any]) -> Dict[
 
 @_guarded
 def issue_execution_grant(owner: str, auth_kind: str, body: Dict[str, Any]) -> Dict[str, Any]:
-    """Issues a short-lived execution grant for a tool call (no crypto in Sovereign Mode)."""
+    """Issues a short-lived execution grant for a tool call (no crypto in Sovereign Mode).
+
+    Gated tools are refused: they require Chrissy's approval, which this kernel
+    does not auto-issue. The desktop executor refuses a local-grant fallback for
+    a gated tool, so the refusal holds end-to-end.
+    """
     env = body or {}
     assistant_turn_id = str(env.get("assistant_turn_id") or "")
+    tool_name = str(env.get("tool_name") or "")
     data = _load()
     turn = data["turns"].get(assistant_turn_id)
 
     if turn is None:
         raise ProtocolError("unknown-assistant-turn", 404)
+
+    if tool_name:
+        from wren.tools import registry as _registry
+        entry = (_registry.load().get("tools") or {}).get(tool_name)
+        if entry and entry.get("gated"):
+            raise ProtocolError("approval-required", 403)
 
     return {
         "execution_grant_id": f"grant_{uuid.uuid4().hex}",
