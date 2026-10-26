@@ -525,9 +525,21 @@ def record_security_refusal(owner: str, auth_kind: str, event: str, reason: str,
 
 def active_tool_schemas(room: str = None, speaker: str = None) -> List[Dict[str, Any]]:
     from wren.tools import offer as _offer
+    from wren.tools import registry as _registry
     from wren.tools import sanctuary_adapter
-    return list(_offer.wave1_schemas_for(room, speaker)) + \
+    schemas = list(_registry.advertised_schemas()) + \
+        list(_offer.wave1_schemas_for(room, speaker)) + \
         sanctuary_adapter.get_active_sanctuary_schemas_for_context(room=room, speaker=speaker)
+    # Dedupe by function name — a duplicate function name is an OpenAI API error.
+    seen = set()
+    out: List[Dict[str, Any]] = []
+    for s in schemas:
+        name = (s.get("function") or {}).get("name")
+        if name in seen:
+            continue
+        seen.add(name)
+        out.append(s)
+    return out
 
 
 def validate_arguments(name: str, arguments: Any) -> Dict[str, Any]:
