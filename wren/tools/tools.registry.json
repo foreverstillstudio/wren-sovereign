@@ -297,172 +297,124 @@
   },
   "tools": {
     "add_dont_forget": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "cancel_compound_workflow": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "cancel_task": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "capture_browser_screenshot": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "check_localhost": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "clear_commit_hash": {
       "runs_on": "desktop",
       "status": "silent"
     },
-    "collect_sources": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
     "compare_documents": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "compare_image_providers": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "compare_webpages": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "complete_or_resolve_memory_item": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "complete_task": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "create_calendar_event": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "create_gmail_draft": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "create_sms_draft": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "create_task_or_reminder": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "delegate_to_worker": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "dispatch_due_notifications": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "edit_file": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "edit_image": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "ember_art_direction": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "evaluate_condition_watches": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "execute_compound_workflow": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "execute_cross_machine": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "execute_deferred_action": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "explain_workflow_provenance": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "export_scribe_document": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "fetch_webpage": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "find_files": {
       "runs_on": "desktop",
       "status": "advertised"
     },
     "find_project_conversations": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "find_project_documents": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "find_project_files": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "find_project_media": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "follow_web_link": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "generate_image": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "generate_image_variants": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "get_calendar_events": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "get_gmail_attachment": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "get_open_project_loops": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "get_project_context": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "get_project_git_state": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "get_recent_project_activity": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "git_diff": {
       "runs_on": "desktop",
@@ -472,101 +424,53 @@
       "runs_on": "desktop",
       "status": "silent"
     },
-    "import_image_to_scribe": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_browser_console_and_network": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_browser_tab": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
     "inspect_calendar_event": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_file": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_git_diff": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_git_history": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_git_status": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "inspect_image": {
       "runs_on": "desktop",
       "status": "silent"
     },
-    "inspect_image_providers": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_localhost_app": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_logs": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
     "inspect_machine_roles": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "inspect_media": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_page_metadata": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "inspect_port": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "inspect_processes": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "inspect_project_health": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "inspect_scribe_session": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "inspect_task": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "inspect_website_diagnostics": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "inspect_workflow_state": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "kernel_memory": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "kernel_status": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "list_cleared_commits": {
       "runs_on": "desktop",
@@ -578,159 +482,103 @@
     },
     "list_local_models": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "list_projects": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "list_scribe_documents": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "list_tasks_and_reminders": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "locate_project": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "manage_local_model": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "open_project_in_tool": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "open_scribe": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "plan_compound_workflow": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "read_document": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "read_drive_document": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "read_file": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "read_gmail_thread": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "read_scribe_document": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "read_sms_thread": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "recall_project_memory": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "remember_project_memory": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "resolve_contact": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "resume_compound_workflow": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "route_capability": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "route_task": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "run_bounded_command": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "run_powershell": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "run_project_script": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "run_project_tests": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "search_drive_files": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "search_files": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "search_gmail_messages": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "search_images": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "search_sms_history": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "send_gmail_message": {
-      "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "send_sms_message": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "snooze_or_reschedule_task": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "start_dev_server": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "stop_dev_server": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "submit_browser_form": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "update_calendar_event": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "runs_on": "sanctuary",
+      "status": "planned"
     },
     "web_search": {
       "runs_on": "desktop",
-      "status": "advertised"
-    },
-    "write_file": {
-      "runs_on": "desktop",
-      "status": "advertised"
+      "status": "planned"
     },
     "sanctuary_append_text_file": {
       "runs_on": "sanctuary",
@@ -754,7 +602,7 @@
     },
     "sanctuary_git_status": {
       "runs_on": "sanctuary",
-      "status": "advertised"
+      "status": "planned"
     },
     "sanctuary_list_directory": {
       "runs_on": "sanctuary",
@@ -783,216 +631,96 @@
     "get_system_vitals": {
       "runs_on": "desktop",
       "description": "Detailed CPU, RAM, and Temperature report from Fortress",
-      "status": "advertised"
+      "status": "planned"
     },
     "get_gpu_metrics": {
       "runs_on": "desktop",
       "description": "Current VRAM usage and GPU load (Nvidia-SMI)",
-      "status": "advertised"
+      "status": "planned"
     },
     "list_network_connections": {
       "runs_on": "desktop",
       "description": "List all active TCP/UDP connections on Fortress",
-      "status": "advertised"
-    },
-    "kill_process_by_name": {
-      "runs_on": "desktop",
-      "description": "Force kill a process by name",
-      "status": "advertised"
+      "status": "planned"
     },
     "get_os_version": {
       "runs_on": "desktop",
       "description": "Get detailed Windows Build and Version info",
-      "status": "advertised"
+      "status": "planned"
     },
     "deep_search_vault": {
-      "runs_on": "desktop",
+      "runs_on": "sanctuary",
       "description": "High-speed recursive text search using ripgrep across the Nexus",
-      "status": "advertised"
-    },
-    "secure_delete": {
-      "runs_on": "desktop",
-      "description": "Military-grade overwrite and delete of a file from Fortress",
-      "status": "advertised"
-    },
-    "sync_folder": {
-      "runs_on": "desktop",
-      "description": "Mirror a folder from Sanctuary to Fortress",
-      "status": "advertised"
-    },
-    "get_file_hash_batch": {
-      "runs_on": "desktop",
-      "description": "Generate SHA-256 hashes for all files in a directory",
-      "status": "advertised"
-    },
-    "create_backup_snapshot": {
-      "runs_on": "desktop",
-      "description": "Create a compressed timestamped backup of a Nexus folder",
-      "status": "advertised"
-    },
-    "run_git_command": {
-      "runs_on": "desktop",
-      "description": "Run any arbitrary git command on a Fortress repo",
-      "status": "advertised"
-    },
-    "git_commit_and_push": {
-      "runs_on": "desktop",
-      "description": "Atomic commit and push to remote",
-      "status": "advertised"
-    },
-    "start_docker_container": {
-      "runs_on": "desktop",
-      "description": "Launch a specified Docker container on Fortress",
-      "status": "advertised"
-    },
-    "inspect_env_vars": {
-      "runs_on": "desktop",
-      "description": "Inspect environment variables on the Fortress system",
-      "status": "advertised"
-    },
-    "analyze_code_complexity": {
-      "runs_on": "desktop",
-      "description": "Run static analysis (cyclomatic complexity) on a file",
-      "status": "advertised"
-    },
-    "ollama_list_models": {
-      "runs_on": "desktop",
-      "description": "List all models available in local Ollama instance",
-      "status": "advertised"
+      "status": "planned"
     },
     "ollama_pull_model": {
       "runs_on": "desktop",
       "description": "Download a new model from Ollama library",
-      "status": "advertised"
+      "status": "planned"
     },
     "ollama_run_inference": {
       "runs_on": "desktop",
       "description": "Directly prompt a local model and return text",
-      "status": "advertised"
-    },
-    "check_model_latency": {
-      "runs_on": "desktop",
-      "description": "Benchmark tokens-per-second for a local model",
-      "status": "advertised"
+      "status": "planned"
     },
     "screenshot_url": {
       "runs_on": "desktop",
       "description": "Render a URL and save as image on Fortress",
-      "status": "advertised"
-    },
-    "extract_all_links": {
-      "runs_on": "desktop",
-      "description": "Extract every hyperlink from a page and save to text",
-      "status": "advertised"
-    },
-    "monitor_url_change": {
-      "runs_on": "desktop",
-      "description": "Check if a URL's content has changed since last visit",
-      "status": "advertised"
-    },
-    "open_application": {
-      "runs_on": "desktop",
-      "description": "Launch any .exe application on Fortress",
-      "status": "advertised"
-    },
-    "set_system_volume": {
-      "runs_on": "desktop",
-      "description": "Change system audio level on Fortress",
-      "status": "advertised"
-    },
-    "get_active_window_title": {
-      "runs_on": "desktop",
-      "description": "Identify which window is currently in focus on Fortress",
-      "status": "advertised"
-    },
-    "close_application": {
-      "runs_on": "desktop",
-      "description": "Gracefully close a running application",
-      "status": "advertised"
-    },
-    "get_clipboard_content": {
-      "runs_on": "desktop",
-      "description": "Read current Windows clipboard on Fortress",
-      "status": "advertised"
-    },
-    "set_clipboard_content": {
-      "runs_on": "desktop",
-      "description": "Push text to Windows clipboard on Fortress",
-      "status": "advertised"
+      "status": "planned"
     },
     "run_scheduled_task": {
-      "runs_on": "desktop",
+      "runs_on": "sanctuary",
       "description": "Trigger a Windows Scheduled Task manually",
-      "status": "advertised"
+      "status": "planned"
     },
     "get_event_viewer_logs": {
       "runs_on": "desktop",
       "description": "Read Windows Event Viewer logs for errors",
-      "status": "advertised"
-    },
-    "set_power_plan": {
-      "runs_on": "desktop",
-      "description": "Switch Fortress between 'Power Saver' and 'High Performance'",
-      "status": "advertised"
+      "status": "planned"
     },
     "list_installed_software": {
       "runs_on": "desktop",
       "description": "List all installed applications on Fortress",
-      "status": "advertised"
+      "status": "planned"
     },
     "manage_registry_key": {
-      "runs_on": "desktop",
+      "runs_on": "sanctuary",
       "description": "Read or Write a Windows Registry key",
-      "status": "advertised"
+      "status": "planned"
     },
     "ping_network_device": {
       "runs_on": "desktop",
       "description": "Ping another device on the local network from Fortress",
-      "status": "advertised"
-    },
-    "optimize_web_assets": {
-      "runs_on": "desktop",
-      "description": "Batch convert images to WebP for web design optimization",
-      "status": "advertised"
+      "status": "planned"
     },
     "check_print_resolution": {
       "runs_on": "desktop",
       "description": "Scan labels for print-ready DPI (300dpi check)",
-      "status": "advertised"
-    },
-    "ai_upscale_image": {
-      "runs_on": "desktop",
-      "description": "Upscale AI art using GPU acceleration",
-      "status": "advertised"
+      "status": "planned"
     },
     "palette_extractor": {
       "runs_on": "desktop",
       "description": "Extract dominant color palette from image for design",
-      "status": "advertised"
+      "status": "planned"
     },
     "sample_library_search": {
       "runs_on": "desktop",
       "description": "Deep-search music sample folders by keyword",
-      "status": "advertised"
+      "status": "planned"
     },
     "audio_format_converter": {
       "runs_on": "desktop",
       "description": "Convert audio files (WAV to MP3/OGG)",
-      "status": "advertised"
+      "status": "planned"
     },
     "family_milestone_log": {
       "runs_on": "sanctuary",
       "description": "Log a child's milestone to the family ledger",
-      "status": "advertised"
+      "status": "planned"
     },
     "kids_activity_scheduler": {
       "runs_on": "sanctuary",
       "description": "Plan and track kids' activities/appointments",
-      "status": "advertised"
-    },
-    "focus_mode_toggle": {
-      "runs_on": "desktop",
-      "description": "Enable/Disable work-mode distraction blocking",
       "status": "advertised"
     },
     "list_comfyui_workflows": {
