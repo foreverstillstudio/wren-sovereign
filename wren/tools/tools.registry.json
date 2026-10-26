@@ -274,213 +274,1488 @@
   "description": "Life-Architect Registry v4.0. Unified control for Professional Design, AI Art, Music, and Family Legacy.",
   "engine_count": 64,
   "engines": {
-    "append_text_file": { "runs_on": "kernel", "tool": "write_file" },
-    "edit_text_file": { "runs_on": "kernel", "tool": "edit_file" },
-    "read_text_file": { "runs_on": "kernel", "tool": "read_file" },
-    "run_powershell": { "runs_on": "desktop", "tool": "run_powershell" },
-    "write_text_file": { "runs_on": "kernel", "tool": "write_file" }
+    "append_text_file": {
+      "runs_on": "kernel",
+      "tool": "write_file"
+    },
+    "edit_text_file": {
+      "runs_on": "kernel",
+      "tool": "edit_file"
+    },
+    "read_text_file": {
+      "runs_on": "kernel",
+      "tool": "read_file"
+    },
+    "run_powershell": {
+      "runs_on": "desktop",
+      "tool": "run_powershell"
+    },
+    "write_text_file": {
+      "runs_on": "kernel",
+      "tool": "write_file"
+    }
   },
   "tools": {
-    "add_dont_forget": { "runs_on": "desktop", "status": "advertised" },
-    "cancel_compound_workflow": { "runs_on": "desktop", "status": "advertised" },
-    "cancel_task": { "runs_on": "desktop", "status": "advertised" },
-    "capture_browser_screenshot": { "runs_on": "desktop", "status": "advertised" },
-    "check_localhost": { "runs_on": "desktop", "status": "advertised" },
-    "clear_commit_hash": { "runs_on": "desktop", "status": "silent" },
-    "collect_sources": { "runs_on": "desktop", "status": "advertised" },
-    "compare_documents": { "runs_on": "desktop", "status": "advertised" },
-    "compare_image_providers": { "runs_on": "desktop", "status": "advertised" },
-    "compare_webpages": { "runs_on": "desktop", "status": "advertised" },
-    "complete_or_resolve_memory_item": { "runs_on": "desktop", "status": "advertised" },
-    "complete_task": { "runs_on": "desktop", "status": "advertised" },
-    "create_calendar_event": { "runs_on": "desktop", "status": "advertised" },
-    "create_gmail_draft": { "runs_on": "desktop", "status": "advertised" },
-    "create_sms_draft": { "runs_on": "desktop", "status": "advertised" },
-    "create_task_or_reminder": { "runs_on": "desktop", "status": "advertised" },
-    "delegate_to_worker": { "runs_on": "desktop", "status": "advertised" },
-    "dispatch_due_notifications": { "runs_on": "desktop", "status": "advertised" },
-    "edit_file": { "runs_on": "desktop", "status": "advertised" },
-    "edit_image": { "runs_on": "desktop", "status": "advertised" },
-    "ember_art_direction": { "runs_on": "desktop", "status": "advertised" },
-    "evaluate_condition_watches": { "runs_on": "desktop", "status": "advertised" },
-    "execute_compound_workflow": { "runs_on": "desktop", "status": "advertised" },
-    "execute_cross_machine": { "runs_on": "desktop", "status": "advertised" },
-    "execute_deferred_action": { "runs_on": "desktop", "status": "advertised" },
-    "explain_workflow_provenance": { "runs_on": "desktop", "status": "advertised" },
-    "export_scribe_document": { "runs_on": "desktop", "status": "advertised" },
-    "fetch_webpage": { "runs_on": "desktop", "status": "advertised" },
-    "find_files": { "runs_on": "desktop", "status": "advertised" },
-    "find_project_conversations": { "runs_on": "desktop", "status": "advertised" },
-    "find_project_documents": { "runs_on": "desktop", "status": "advertised" },
-    "find_project_files": { "runs_on": "desktop", "status": "advertised" },
-    "find_project_media": { "runs_on": "desktop", "status": "advertised" },
-    "follow_web_link": { "runs_on": "desktop", "status": "advertised" },
-    "generate_image": { "runs_on": "desktop", "status": "advertised" },
-    "generate_image_variants": { "runs_on": "desktop", "status": "advertised" },
-    "get_calendar_events": { "runs_on": "desktop", "status": "advertised" },
-    "get_gmail_attachment": { "runs_on": "desktop", "status": "advertised" },
-    "get_open_project_loops": { "runs_on": "desktop", "status": "advertised" },
-    "get_project_context": { "runs_on": "desktop", "status": "advertised" },
-    "get_project_git_state": { "runs_on": "desktop", "status": "advertised" },
-    "get_recent_project_activity": { "runs_on": "desktop", "status": "advertised" },
-    "git_diff": { "runs_on": "desktop", "status": "silent" },
-    "git_status": { "runs_on": "desktop", "status": "silent" },
-    "import_image_to_scribe": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_browser_console_and_network": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_browser_tab": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_calendar_event": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_file": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_git_diff": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_git_history": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_git_status": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_image": { "runs_on": "desktop", "status": "silent" },
-    "inspect_image_providers": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_localhost_app": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_logs": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_machine_roles": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_media": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_page_metadata": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_port": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_processes": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_project_health": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_scribe_session": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_task": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_website_diagnostics": { "runs_on": "desktop", "status": "advertised" },
-    "inspect_workflow_state": { "runs_on": "desktop", "status": "advertised" },
-    "kernel_memory": { "runs_on": "desktop", "status": "advertised" },
-    "kernel_status": { "runs_on": "desktop", "status": "advertised" },
-    "list_cleared_commits": { "runs_on": "desktop", "status": "silent" },
-    "list_directory": { "runs_on": "desktop", "status": "advertised" },
-    "list_local_models": { "runs_on": "desktop", "status": "advertised" },
-    "list_projects": { "runs_on": "desktop", "status": "advertised" },
-    "list_scribe_documents": { "runs_on": "desktop", "status": "advertised" },
-    "list_tasks_and_reminders": { "runs_on": "desktop", "status": "advertised" },
-    "locate_project": { "runs_on": "desktop", "status": "advertised" },
-    "manage_local_model": { "runs_on": "desktop", "status": "advertised" },
-    "open_project_in_tool": { "runs_on": "desktop", "status": "advertised" },
-    "open_scribe": { "runs_on": "desktop", "status": "advertised" },
-    "plan_compound_workflow": { "runs_on": "desktop", "status": "advertised" },
-    "read_document": { "runs_on": "desktop", "status": "advertised" },
-    "read_drive_document": { "runs_on": "desktop", "status": "advertised" },
-    "read_file": { "runs_on": "desktop", "status": "advertised" },
-    "read_gmail_thread": { "runs_on": "desktop", "status": "advertised" },
-    "read_scribe_document": { "runs_on": "desktop", "status": "advertised" },
-    "read_sms_thread": { "runs_on": "desktop", "status": "advertised" },
-    "recall_project_memory": { "runs_on": "desktop", "status": "advertised" },
-    "remember_project_memory": { "runs_on": "desktop", "status": "advertised" },
-    "resolve_contact": { "runs_on": "desktop", "status": "advertised" },
-    "resume_compound_workflow": { "runs_on": "desktop", "status": "advertised" },
-    "route_capability": { "runs_on": "desktop", "status": "advertised" },
-    "route_task": { "runs_on": "desktop", "status": "advertised" },
-    "run_bounded_command": { "runs_on": "desktop", "status": "advertised" },
-    "run_powershell": { "runs_on": "desktop", "status": "advertised" },
-    "run_project_script": { "runs_on": "desktop", "status": "advertised" },
-    "run_project_tests": { "runs_on": "desktop", "status": "advertised" },
-    "search_drive_files": { "runs_on": "desktop", "status": "advertised" },
-    "search_files": { "runs_on": "desktop", "status": "advertised" },
-    "search_gmail_messages": { "runs_on": "desktop", "status": "advertised" },
-    "search_images": { "runs_on": "desktop", "status": "advertised" },
-    "search_sms_history": { "runs_on": "desktop", "status": "advertised" },
-    "send_gmail_message": { "runs_on": "desktop", "status": "advertised" },
-    "send_sms_message": { "runs_on": "desktop", "status": "advertised" },
-    "snooze_or_reschedule_task": { "runs_on": "desktop", "status": "advertised" },
-    "start_dev_server": { "runs_on": "desktop", "status": "advertised" },
-    "stop_dev_server": { "runs_on": "desktop", "status": "advertised" },
-    "submit_browser_form": { "runs_on": "desktop", "status": "advertised" },
-    "update_calendar_event": { "runs_on": "desktop", "status": "advertised" },
-    "web_search": { "runs_on": "desktop", "status": "advertised" },
-    "write_file": { "runs_on": "desktop", "status": "advertised" },
-    "sanctuary_append_text_file": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_create_directory": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_edit_text_file": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_find_files": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_get_run": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_git_status": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_list_directory": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_list_recent_runs": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_read_text_file": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_run_python_unittest": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_workspace_info": { "runs_on": "sanctuary", "status": "advertised" },
-    "sanctuary_write_text_file": { "runs_on": "sanctuary", "status": "advertised" },
-    "get_system_vitals": { "runs_on": "desktop", "description": "Detailed CPU, RAM, and Temperature report from Fortress", "status": "advertised" },
-    "get_gpu_metrics": { "runs_on": "desktop", "description": "Current VRAM usage and GPU load (Nvidia-SMI)", "status": "advertised" },
-    "list_network_connections": { "runs_on": "desktop", "description": "List all active TCP/UDP connections on Fortress", "status": "advertised" },
-    "kill_process_by_name": { "runs_on": "desktop", "description": "Force kill a process by name", "status": "advertised" },
-    "get_os_version": { "runs_on": "desktop", "description": "Get detailed Windows Build and Version info", "status": "advertised" },
-    "deep_search_vault": { "runs_on": "desktop", "description": "High-speed recursive text search using ripgrep across the Nexus", "status": "advertised" },
-    "secure_delete": { "runs_on": "desktop", "description": "Military-grade overwrite and delete of a file from Fortress", "status": "advertised" },
-    "sync_folder": { "runs_on": "desktop", "description": "Mirror a folder from Sanctuary to Fortress", "status": "advertised" },
-    "get_file_hash_batch": { "runs_on": "desktop", "description": "Generate SHA-256 hashes for all files in a directory", "status": "advertised" },
-    "create_backup_snapshot": { "runs_on": "desktop", "description": "Create a compressed timestamped backup of a Nexus folder", "status": "advertised" },
-    "run_git_command": { "runs_on": "desktop", "description": "Run any arbitrary git command on a Fortress repo", "status": "advertised" },
-    "git_commit_and_push": { "runs_on": "desktop", "description": "Atomic commit and push to remote", "status": "advertised" },
-    "start_docker_container": { "runs_on": "desktop", "description": "Launch a specified Docker container on Fortress", "status": "advertised" },
-    "inspect_env_vars": { "runs_on": "desktop", "description": "Inspect environment variables on the Fortress system", "status": "advertised" },
-    "analyze_code_complexity": { "runs_on": "desktop", "description": "Run static analysis (cyclomatic complexity) on a file", "status": "advertised" },
-    "ollama_list_models": { "runs_on": "desktop", "description": "List all models available in local Ollama instance", "status": "advertised" },
-    "ollama_pull_model": { "runs_on": "desktop", "description": "Download a new model from Ollama library", "status": "advertised" },
-    "ollama_run_inference": { "runs_on": "desktop", "description": "Directly prompt a local model and return text", "status": "advertised" },
-    "check_model_latency": { "runs_on": "desktop", "description": "Benchmark tokens-per-second for a local model", "status": "advertised" },
-    "screenshot_url": { "runs_on": "desktop", "description": "Render a URL and save as image on Fortress", "status": "advertised" },
-    "extract_all_links": { "runs_on": "desktop", "description": "Extract every hyperlink from a page and save to text", "status": "advertised" },
-    "monitor_url_change": { "runs_on": "desktop", "description": "Check if a URL's content has changed since last visit", "status": "advertised" },
-    "open_application": { "runs_on": "desktop", "description": "Launch any .exe application on Fortress", "status": "advertised" },
-    "set_system_volume": { "runs_on": "desktop", "description": "Change system audio level on Fortress", "status": "advertised" },
-    "get_active_window_title": { "runs_on": "desktop", "description": "Identify which window is currently in focus on Fortress", "status": "advertised" },
-    "close_application": { "runs_on": "desktop", "description": "Gracefully close a running application", "status": "advertised" },
-    "get_clipboard_content": { "runs_on": "desktop", "description": "Read current Windows clipboard on Fortress", "status": "advertised" },
-    "set_clipboard_content": { "runs_on": "desktop", "description": "Push text to Windows clipboard on Fortress", "status": "advertised" },
-    "run_scheduled_task": { "runs_on": "desktop", "description": "Trigger a Windows Scheduled Task manually", "status": "advertised" },
-    "get_event_viewer_logs": { "runs_on": "desktop", "description": "Read Windows Event Viewer logs for errors", "status": "advertised" },
-    "set_power_plan": { "runs_on": "desktop", "description": "Switch Fortress between 'Power Saver' and 'High Performance'", "status": "advertised" },
-    "list_installed_software": { "runs_on": "desktop", "description": "List all installed applications on Fortress", "status": "advertised" },
-    "manage_registry_key": { "runs_on": "desktop", "description": "Read or Write a Windows Registry key", "status": "advertised" },
-    "ping_network_device": { "runs_on": "desktop", "description": "Ping another device on the local network from Fortress", "status": "advertised" },
-    "optimize_web_assets": { "runs_on": "desktop", "description": "Batch convert images to WebP for web design optimization", "status": "advertised" },
-    "check_print_resolution": { "runs_on": "desktop", "description": "Scan labels for print-ready DPI (300dpi check)", "status": "advertised" },
-    "ai_upscale_image": { "runs_on": "desktop", "description": "Upscale AI art using GPU acceleration", "status": "advertised" },
-    "palette_extractor": { "runs_on": "desktop", "description": "Extract dominant color palette from image for design", "status": "advertised" },
-    "sample_library_search": { "runs_on": "desktop", "description": "Deep-search music sample folders by keyword", "status": "advertised" },
-    "audio_format_converter": { "runs_on": "desktop", "description": "Convert audio files (WAV to MP3/OGG)", "status": "advertised" },
-    "family_milestone_log": { "runs_on": "sanctuary", "description": "Log a child's milestone to the family ledger", "status": "advertised" },
-    "kids_activity_scheduler": { "runs_on": "sanctuary", "description": "Plan and track kids' activities/appointments", "status": "advertised" },
-    "focus_mode_toggle": { "runs_on": "desktop", "description": "Enable/Disable work-mode distraction blocking", "status": "advertised" },
-    "list_comfyui_workflows": { "runs_on": "desktop", "description": "List saved ComfyUI workflow templates", "status": "advertised" },
-    "read_comfyui_workflow": { "runs_on": "desktop", "description": "Read a ComfyUI workflow's nodes, prompts and parameters", "status": "advertised" },
-    "run_comfyui_workflow": { "runs_on": "desktop", "description": "Submit a workflow to ComfyUI /prompt and start it", "status": "advertised" },
-    "get_comfyui_queue": { "runs_on": "desktop", "description": "Read the ComfyUI job queue (running and pending)", "status": "advertised" },
-    "get_comfyui_history": { "runs_on": "desktop", "description": "Fetch finished ComfyUI jobs and their output image IDs", "status": "advertised" },
-    "list_comfyui_models": { "runs_on": "desktop", "description": "List ComfyUI checkpoints, LoRAs, VAEs and embeddings", "status": "advertised" },
-    "list_comfyui_nodes": { "runs_on": "desktop", "description": "List available ComfyUI node types", "status": "advertised" },
-    "save_comfyui_workflow": { "runs_on": "desktop", "description": "Save or export a ComfyUI workflow JSON", "status": "advertised" },
-    "edit_comfyui_workflow": { "runs_on": "desktop", "description": "Swap a checkpoint/LoRA or change a prompt in a ComfyUI workflow", "status": "advertised" },
-    "upload_comfyui_image": { "runs_on": "desktop", "description": "Upload an input image to ComfyUI for img2img", "status": "advertised" },
-    "get_comfyui_output_image": { "runs_on": "desktop", "description": "Fetch a generated ComfyUI image by filename", "status": "advertised" },
-    "cancel_comfyui_job": { "runs_on": "desktop", "description": "Interrupt or remove a queued ComfyUI job", "status": "advertised" },
-    "remove_background": { "runs_on": "desktop", "description": "Remove the background from an image (cut out the subject)", "status": "advertised" },
-    "inpaint_image": { "runs_on": "desktop", "description": "Fill or repair a masked region of an image", "status": "advertised" },
-    "outpaint_image": { "runs_on": "desktop", "description": "Extend an image beyond its original edges", "status": "advertised" },
-    "face_swap_image": { "runs_on": "desktop", "description": "Swap a face into an image (AuraStyle likeness transfer)", "status": "advertised" },
-    "train_lora": { "runs_on": "desktop", "description": "Train a LoRA model from a folder of reference images", "status": "advertised" },
-    "image_to_video": { "runs_on": "desktop", "description": "Animate a still image into a short video clip", "status": "advertised" },
-    "generate_video": { "runs_on": "desktop", "description": "Generate a video from a text or image prompt", "status": "advertised" },
-    "trim_video": { "runs_on": "desktop", "description": "Trim a video clip to a start/end range", "status": "advertised" },
-    "concat_video": { "runs_on": "desktop", "description": "Concatenate multiple video clips into one", "status": "advertised" },
-    "generate_music": { "runs_on": "desktop", "description": "Generate a music track from a text prompt", "status": "advertised" },
-    "search_music_catalog": { "runs_on": "desktop", "description": "Search the studio music catalog by title, mood or keyword", "status": "advertised" },
-    "create_pdf": { "runs_on": "desktop", "description": "Create a PDF document from content or markup", "status": "advertised" },
-    "create_docx": { "runs_on": "desktop", "description": "Create a Word (.docx) document", "status": "advertised" },
-    "create_spreadsheet": { "runs_on": "desktop", "description": "Create a spreadsheet (.xlsx) workbook", "status": "advertised" },
-    "create_presentation": { "runs_on": "desktop", "description": "Create a PowerPoint (.pptx) deck", "status": "advertised" },
-    "deploy_website": { "runs_on": "desktop", "description": "Deploy a site to Vercel or Netlify", "status": "advertised" },
-    "git_checkout": { "runs_on": "desktop", "description": "Check out a branch or commit in a git repo", "status": "advertised" },
-    "git_branch": { "runs_on": "desktop", "description": "List or create git branches", "status": "advertised" },
-    "git_merge": { "runs_on": "desktop", "description": "Merge a branch into the current branch", "status": "advertised" },
-    "git_push": { "runs_on": "desktop", "description": "Push commits to a git remote", "status": "advertised" },
-    "git_pull": { "runs_on": "desktop", "description": "Pull changes from a git remote", "status": "advertised" },
-    "query_local_database": { "runs_on": "desktop", "description": "Run a read query against a local SQLite database", "status": "advertised" }
+    "add_dont_forget": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "cancel_compound_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "cancel_task": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "capture_browser_screenshot": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "check_localhost": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "clear_commit_hash": {
+      "runs_on": "desktop",
+      "status": "silent"
+    },
+    "collect_sources": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "compare_documents": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "compare_image_providers": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "compare_webpages": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "complete_or_resolve_memory_item": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "complete_task": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "create_calendar_event": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "create_gmail_draft": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "create_sms_draft": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "create_task_or_reminder": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "delegate_to_worker": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "dispatch_due_notifications": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "edit_file": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "edit_image": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "ember_art_direction": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "evaluate_condition_watches": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "execute_compound_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "execute_cross_machine": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "execute_deferred_action": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "explain_workflow_provenance": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "export_scribe_document": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "fetch_webpage": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "find_files": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "find_project_conversations": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "find_project_documents": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "find_project_files": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "find_project_media": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "follow_web_link": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "generate_image": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "generate_image_variants": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_calendar_events": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_gmail_attachment": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_open_project_loops": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_project_context": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_project_git_state": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "get_recent_project_activity": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "git_diff": {
+      "runs_on": "desktop",
+      "status": "silent"
+    },
+    "git_status": {
+      "runs_on": "desktop",
+      "status": "silent"
+    },
+    "import_image_to_scribe": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_browser_console_and_network": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_browser_tab": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_calendar_event": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_file": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_git_diff": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_git_history": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_git_status": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_image": {
+      "runs_on": "desktop",
+      "status": "silent"
+    },
+    "inspect_image_providers": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_localhost_app": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_logs": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_machine_roles": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_media": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_page_metadata": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_port": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_processes": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_project_health": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_scribe_session": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_task": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_website_diagnostics": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "inspect_workflow_state": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "kernel_memory": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "kernel_status": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "list_cleared_commits": {
+      "runs_on": "desktop",
+      "status": "silent"
+    },
+    "list_directory": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "list_local_models": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "list_projects": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "list_scribe_documents": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "list_tasks_and_reminders": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "locate_project": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "manage_local_model": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "open_project_in_tool": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "open_scribe": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "plan_compound_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_document": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_drive_document": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_file": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_gmail_thread": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_scribe_document": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "read_sms_thread": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "recall_project_memory": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "remember_project_memory": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "resolve_contact": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "resume_compound_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "route_capability": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "route_task": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "run_bounded_command": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "run_powershell": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "run_project_script": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "run_project_tests": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "search_drive_files": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "search_files": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "search_gmail_messages": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "search_images": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "search_sms_history": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "send_gmail_message": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "send_sms_message": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "snooze_or_reschedule_task": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "start_dev_server": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "stop_dev_server": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "submit_browser_form": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "update_calendar_event": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "web_search": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "write_file": {
+      "runs_on": "desktop",
+      "status": "advertised"
+    },
+    "sanctuary_append_text_file": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_create_directory": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_edit_text_file": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_find_files": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_get_run": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_git_status": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_list_directory": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_list_recent_runs": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_read_text_file": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_run_python_unittest": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_workspace_info": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "sanctuary_write_text_file": {
+      "runs_on": "sanctuary",
+      "status": "advertised"
+    },
+    "get_system_vitals": {
+      "runs_on": "desktop",
+      "description": "Detailed CPU, RAM, and Temperature report from Fortress",
+      "status": "advertised"
+    },
+    "get_gpu_metrics": {
+      "runs_on": "desktop",
+      "description": "Current VRAM usage and GPU load (Nvidia-SMI)",
+      "status": "advertised"
+    },
+    "list_network_connections": {
+      "runs_on": "desktop",
+      "description": "List all active TCP/UDP connections on Fortress",
+      "status": "advertised"
+    },
+    "kill_process_by_name": {
+      "runs_on": "desktop",
+      "description": "Force kill a process by name",
+      "status": "advertised"
+    },
+    "get_os_version": {
+      "runs_on": "desktop",
+      "description": "Get detailed Windows Build and Version info",
+      "status": "advertised"
+    },
+    "deep_search_vault": {
+      "runs_on": "desktop",
+      "description": "High-speed recursive text search using ripgrep across the Nexus",
+      "status": "advertised"
+    },
+    "secure_delete": {
+      "runs_on": "desktop",
+      "description": "Military-grade overwrite and delete of a file from Fortress",
+      "status": "advertised"
+    },
+    "sync_folder": {
+      "runs_on": "desktop",
+      "description": "Mirror a folder from Sanctuary to Fortress",
+      "status": "advertised"
+    },
+    "get_file_hash_batch": {
+      "runs_on": "desktop",
+      "description": "Generate SHA-256 hashes for all files in a directory",
+      "status": "advertised"
+    },
+    "create_backup_snapshot": {
+      "runs_on": "desktop",
+      "description": "Create a compressed timestamped backup of a Nexus folder",
+      "status": "advertised"
+    },
+    "run_git_command": {
+      "runs_on": "desktop",
+      "description": "Run any arbitrary git command on a Fortress repo",
+      "status": "advertised"
+    },
+    "git_commit_and_push": {
+      "runs_on": "desktop",
+      "description": "Atomic commit and push to remote",
+      "status": "advertised"
+    },
+    "start_docker_container": {
+      "runs_on": "desktop",
+      "description": "Launch a specified Docker container on Fortress",
+      "status": "advertised"
+    },
+    "inspect_env_vars": {
+      "runs_on": "desktop",
+      "description": "Inspect environment variables on the Fortress system",
+      "status": "advertised"
+    },
+    "analyze_code_complexity": {
+      "runs_on": "desktop",
+      "description": "Run static analysis (cyclomatic complexity) on a file",
+      "status": "advertised"
+    },
+    "ollama_list_models": {
+      "runs_on": "desktop",
+      "description": "List all models available in local Ollama instance",
+      "status": "advertised"
+    },
+    "ollama_pull_model": {
+      "runs_on": "desktop",
+      "description": "Download a new model from Ollama library",
+      "status": "advertised"
+    },
+    "ollama_run_inference": {
+      "runs_on": "desktop",
+      "description": "Directly prompt a local model and return text",
+      "status": "advertised"
+    },
+    "check_model_latency": {
+      "runs_on": "desktop",
+      "description": "Benchmark tokens-per-second for a local model",
+      "status": "advertised"
+    },
+    "screenshot_url": {
+      "runs_on": "desktop",
+      "description": "Render a URL and save as image on Fortress",
+      "status": "advertised"
+    },
+    "extract_all_links": {
+      "runs_on": "desktop",
+      "description": "Extract every hyperlink from a page and save to text",
+      "status": "advertised"
+    },
+    "monitor_url_change": {
+      "runs_on": "desktop",
+      "description": "Check if a URL's content has changed since last visit",
+      "status": "advertised"
+    },
+    "open_application": {
+      "runs_on": "desktop",
+      "description": "Launch any .exe application on Fortress",
+      "status": "advertised"
+    },
+    "set_system_volume": {
+      "runs_on": "desktop",
+      "description": "Change system audio level on Fortress",
+      "status": "advertised"
+    },
+    "get_active_window_title": {
+      "runs_on": "desktop",
+      "description": "Identify which window is currently in focus on Fortress",
+      "status": "advertised"
+    },
+    "close_application": {
+      "runs_on": "desktop",
+      "description": "Gracefully close a running application",
+      "status": "advertised"
+    },
+    "get_clipboard_content": {
+      "runs_on": "desktop",
+      "description": "Read current Windows clipboard on Fortress",
+      "status": "advertised"
+    },
+    "set_clipboard_content": {
+      "runs_on": "desktop",
+      "description": "Push text to Windows clipboard on Fortress",
+      "status": "advertised"
+    },
+    "run_scheduled_task": {
+      "runs_on": "desktop",
+      "description": "Trigger a Windows Scheduled Task manually",
+      "status": "advertised"
+    },
+    "get_event_viewer_logs": {
+      "runs_on": "desktop",
+      "description": "Read Windows Event Viewer logs for errors",
+      "status": "advertised"
+    },
+    "set_power_plan": {
+      "runs_on": "desktop",
+      "description": "Switch Fortress between 'Power Saver' and 'High Performance'",
+      "status": "advertised"
+    },
+    "list_installed_software": {
+      "runs_on": "desktop",
+      "description": "List all installed applications on Fortress",
+      "status": "advertised"
+    },
+    "manage_registry_key": {
+      "runs_on": "desktop",
+      "description": "Read or Write a Windows Registry key",
+      "status": "advertised"
+    },
+    "ping_network_device": {
+      "runs_on": "desktop",
+      "description": "Ping another device on the local network from Fortress",
+      "status": "advertised"
+    },
+    "optimize_web_assets": {
+      "runs_on": "desktop",
+      "description": "Batch convert images to WebP for web design optimization",
+      "status": "advertised"
+    },
+    "check_print_resolution": {
+      "runs_on": "desktop",
+      "description": "Scan labels for print-ready DPI (300dpi check)",
+      "status": "advertised"
+    },
+    "ai_upscale_image": {
+      "runs_on": "desktop",
+      "description": "Upscale AI art using GPU acceleration",
+      "status": "advertised"
+    },
+    "palette_extractor": {
+      "runs_on": "desktop",
+      "description": "Extract dominant color palette from image for design",
+      "status": "advertised"
+    },
+    "sample_library_search": {
+      "runs_on": "desktop",
+      "description": "Deep-search music sample folders by keyword",
+      "status": "advertised"
+    },
+    "audio_format_converter": {
+      "runs_on": "desktop",
+      "description": "Convert audio files (WAV to MP3/OGG)",
+      "status": "advertised"
+    },
+    "family_milestone_log": {
+      "runs_on": "sanctuary",
+      "description": "Log a child's milestone to the family ledger",
+      "status": "advertised"
+    },
+    "kids_activity_scheduler": {
+      "runs_on": "sanctuary",
+      "description": "Plan and track kids' activities/appointments",
+      "status": "advertised"
+    },
+    "focus_mode_toggle": {
+      "runs_on": "desktop",
+      "description": "Enable/Disable work-mode distraction blocking",
+      "status": "advertised"
+    },
+    "list_comfyui_workflows": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "List the workflow JSON files saved in ComfyUI's own workflow folder, with each file's format (api, ui or invalid) and size.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "read_comfyui_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Read one saved ComfyUI workflow and report its nodes and its prompt text. Reports format 'ui' or 'api'; a UI-format file is readable but not runnable.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Workflow file name, inside ComfyUI's workflow folder."
+          },
+          "path": {
+            "type": "string",
+            "description": "Absolute path inside ComfyUI's workflow folder instead of name."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "run_comfyui_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Submit an API-format ComfyUI graph to /prompt and return its prompt_id. Refuses a UI-format workflow instead of sending something ComfyUI would reject.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "workflow": {
+            "type": "object",
+            "description": "API-format graph: {node_id: {class_type, inputs}}."
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of a saved API-format workflow file."
+          },
+          "path": {
+            "type": "string",
+            "description": "Absolute path of a saved API-format workflow file."
+          },
+          "client_id": {
+            "type": "string",
+            "description": "Optional ComfyUI client id."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "get_comfyui_queue": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Report ComfyUI's queue: what is running and what is waiting, with prompt ids and counts.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "get_comfyui_history": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Report finished ComfyUI jobs and the output image references they produced (filename, subfolder, type).",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt_id": {
+            "type": "string",
+            "description": "One job id; omit for the recent list."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "How many jobs to return (default 50)."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "list_comfyui_models": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "List the model files ComfyUI has on disk: checkpoints, LoRAs, VAEs and embeddings, with sizes.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "all",
+              "checkpoints",
+              "loras",
+              "vae",
+              "embeddings"
+            ],
+            "description": "Which group to list (default all)."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "list_comfyui_nodes": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "List available ComfyUI node types and their categories, or fetch one node's full input schema when a class_type is given.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "class_type": {
+            "type": "string",
+            "description": "One node type, to return its full input schema."
+          },
+          "category": {
+            "type": "string",
+            "description": "Filter the list to one category."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "save_comfyui_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Write a workflow JSON into ComfyUI's workflow folder. Refuses to overwrite an existing file unless overwrite is true.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "File name to write, inside ComfyUI's workflow folder."
+          },
+          "path": {
+            "type": "string",
+            "description": "Absolute path inside ComfyUI's workflow folder instead of name."
+          },
+          "workflow": {
+            "type": "object",
+            "description": "The workflow/graph object to save."
+          },
+          "overwrite": {
+            "type": "boolean",
+            "description": "Replace an existing file (default false)."
+          }
+        },
+        "required": [
+          "workflow"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "edit_comfyui_workflow": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Change an API-format workflow in place: swap the checkpoint or a LoRA, rewrite prompt text, set a seed, or change the output filename prefix. Any other change key is refused.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Workflow file name."
+          },
+          "path": {
+            "type": "string",
+            "description": "Absolute path instead of name."
+          },
+          "changes": {
+            "type": "object",
+            "description": "Only these keys are accepted: checkpoint, lora, prompts, seed, filename_prefix.",
+            "properties": {
+              "checkpoint": {
+                "type": "string",
+                "description": "New checkpoint filename for the first CheckpointLoaderSimple."
+              },
+              "lora": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "strength_model": {
+                    "type": "number"
+                  },
+                  "strength_clip": {
+                    "type": "number"
+                  }
+                },
+                "additionalProperties": false
+              },
+              "prompts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "node_id": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "node_id",
+                    "text"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "seed": {
+                "type": "object",
+                "properties": {
+                  "node_id": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "node_id",
+                  "value"
+                ],
+                "additionalProperties": false
+              },
+              "filename_prefix": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "changes"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "upload_comfyui_image": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Push an image into ComfyUI's input folder, either from a local file path or from base64 data.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Local image file to upload."
+          },
+          "data_base64": {
+            "type": "string",
+            "description": "Image bytes as base64 (alt to path)."
+          },
+          "filename": {
+            "type": "string",
+            "description": "Name to store it under (defaults to the file name)."
+          },
+          "subfolder": {
+            "type": "string",
+            "description": "Subfolder inside ComfyUI input."
+          },
+          "overwrite": {
+            "type": "boolean",
+            "description": "Replace an existing file (default false)."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "get_comfyui_output_image": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Fetch a generated image from ComfyUI by filename and save it locally, returning the saved path and size.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string",
+            "description": "Output filename from get_comfyui_history."
+          },
+          "subfolder": {
+            "type": "string",
+            "description": "Subfolder reported with the image."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "output",
+              "input",
+              "temp"
+            ],
+            "description": "Which ComfyUI folder (default output)."
+          }
+        },
+        "required": [
+          "filename"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cancel_comfyui_job": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Interrupt ComfyUI's running job, or remove a queued one. With queue_only and no prompt_id, clears the pending queue.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "prompt_id": {
+            "type": "string",
+            "description": "Job to stop or remove."
+          },
+          "queue_only": {
+            "type": "boolean",
+            "description": "Clear pending jobs rather than interrupt the running one."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "trim_video": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Cut a section out of a video with ffmpeg and write it to a new file. Give either duration_seconds or end_seconds.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Source video (must exist, under an allowed root)."
+          },
+          "output_path": {
+            "type": "string",
+            "description": "Where to write the trimmed video."
+          },
+          "start_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Start offset (default 0)."
+          },
+          "duration_seconds": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Length to keep."
+          },
+          "end_seconds": {
+            "type": "number",
+            "description": "End offset, if no duration is given."
+          }
+        },
+        "required": [
+          "path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "concat_video": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Join two or more video files into one, in the order given, using ffmpeg's concat demuxer.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "paths": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "string"
+            },
+            "description": "Videos to join, in order."
+          },
+          "output_path": {
+            "type": "string",
+            "description": "Where to write the joined video."
+          }
+        },
+        "required": [
+          "paths",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "search_music_catalog": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Search the Fortress song catalog (43 song files) by title or lyric text and return matching songs with a snippet.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "Text to look for; empty returns the first N songs."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Maximum matches (default 20)."
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    "create_pdf": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Create a PDF from a title and paragraphs, by building a document and converting it with LibreOffice.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Where to write the .pdf."
+          },
+          "title": {
+            "type": "string",
+            "description": "Document heading."
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "description": "A string, or {text, style:'heading', level}, or {bullets:[...]}"
+            }
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "create_docx": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Create a Word document from a title, paragraphs (strings or {heading, level} or {bullets}), and optional tables.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Where to write the .docx."
+          },
+          "title": {
+            "type": "string",
+            "description": "Document heading."
+          },
+          "paragraphs": {
+            "type": "array",
+            "items": {
+              "description": "A string, or {text, style:'heading', level}, or {bullets:[...]}"
+            }
+          },
+          "tables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "create_spreadsheet": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Create an .xlsx workbook from one or more sheets, each a name and a list of rows.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Where to write the .xlsx."
+          },
+          "sheets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  }
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "create_presentation": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Create a .pptx deck from a list of slides, each with a title and bullet lines.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Where to write the .pptx."
+          },
+          "slides": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "bullets": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "title"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "path",
+          "slides"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "deploy_website": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Publish a site with vercel (production by default) or wrangler, in the given directory, and return the deployed URL. Requires Chrissy's approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Site directory (under an allowed root)."
+          },
+          "provider": {
+            "type": "string",
+            "enum": [
+              "vercel",
+              "cloudflare"
+            ],
+            "description": "Which CLI to deploy with."
+          },
+          "prod": {
+            "type": "boolean",
+            "description": "Production deploy for vercel (default true)."
+          }
+        },
+        "required": [
+          "path",
+          "provider"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "git_checkout": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Switch a repository to an existing branch. Requires Chrissy's approval; refused without a kernel execution grant.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Repository directory (must contain .git and sit under an allowed root)."
+          },
+          "branch": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
+            "description": "Existing branch name."
+          }
+        },
+        "required": [
+          "cwd",
+          "branch"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "git_branch": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Create a branch and switch to it, optionally from a starting ref. Requires Chrissy's approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Repository directory."
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
+            "description": "New branch name."
+          },
+          "from": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
+            "description": "Starting branch or ref."
+          }
+        },
+        "required": [
+          "cwd",
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "git_merge": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Merge one branch into the current one with --no-edit. Requires Chrissy's approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Repository directory."
+          },
+          "branch": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
+            "description": "Branch to merge in."
+          }
+        },
+        "required": [
+          "cwd",
+          "branch"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "git_push": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Push the current branch to a remote. Never forces. Requires Chrissy's approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Repository directory."
+          },
+          "remote": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,60}$",
+            "description": "Remote name (default origin)."
+          },
+          "branch": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,200}$",
+            "description": "Branch to push (default current)."
+          }
+        },
+        "required": [
+          "cwd"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "git_pull": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Fast-forward-only pull from a remote, so it can never create a surprise merge. Requires Chrissy's approval.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "cwd": {
+            "type": "string",
+            "description": "Repository directory."
+          },
+          "remote": {
+            "type": "string",
+            "description": "Remote name (default origin)."
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch to pull (default current)."
+          }
+        },
+        "required": [
+          "cwd"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "query_local_database": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Run one read-only SELECT/WITH query against an allowlisted local sqlite database and return columns and rows. Refuses anything that could write, including PRAGMA and ATTACH.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "database": {
+            "type": "string",
+            "description": "One of the three allowlisted FortressTerminal sqlite files."
+          },
+          "sql": {
+            "type": "string",
+            "description": "A single SELECT or WITH statement."
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Row cap (default 200)."
+          }
+        },
+        "required": [
+          "database",
+          "sql"
+        ],
+        "additionalProperties": false
+      }
+    }
   },
   "version": 4
 }
-
-

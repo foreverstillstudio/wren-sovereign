@@ -106,25 +106,29 @@ class RegistryEngine:
         return out
 
     def _generate_schema(self, name: str, entry: ToolEntry) -> Dict[str, Any]:
-        """Constructs a standard OpenAI function schema from a registry entry."""
-        args = entry.get("args") or {}
-        
-        # Currently treats all registered args as strings; 
-        # extensible to handle type-mapping in the future.
-        properties = {k: {"type": "string"} for k in args}
+        """Constructs a standard OpenAI function schema from a registry entry.
+
+        A registry entry may carry a full `parameters` JSON Schema (authoritative,
+        matching the desktop executor's own validation). If absent, a minimal
+        schema is derived from the legacy `args` map.
+        """
         description = entry.get("description") or name.replace("_", " ").strip()
-        
+        parameters = entry.get("parameters")
+        if parameters is None:
+            args = entry.get("args") or {}
+            properties = {k: {"type": "string"} for k in args}
+            parameters = {
+                "type": "object",
+                "properties": properties,
+                "required": list(properties.keys()),
+                "additionalProperties": False,
+            }
         return {
             "type": "function",
             "function": {
                 "name": name,
                 "description": description,
-                "parameters": {
-                    "type": "object",
-                    "properties": properties,
-                    "required": list(properties.keys()),
-                    "additionalProperties": False,
-                },
+                "parameters": parameters,
             },
         }
 
