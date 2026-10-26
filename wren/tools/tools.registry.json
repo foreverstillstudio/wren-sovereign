@@ -1372,8 +1372,7 @@
         },
         "required": [
           "video_path",
-          "start",
-          "end"
+          "start"
         ],
         "additionalProperties": false
       },
@@ -1752,6 +1751,185 @@
         "required": [
           "database_path",
           "query"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "workspace_info": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Report the approved workspace this desktop is bound to, and its limits.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "read_text_file": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Read a text file from the approved workspace and return its contents.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path inside the approved workspace."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "write_text_file": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Write a text file, replacing it entirely. Backs the previous version up first. To add to a file use append_text_file; to change part of one use edit_text_file.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path inside the approved workspace."
+          },
+          "content": {
+            "type": "string",
+            "description": "The full new contents."
+          },
+          "expected_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Optional guard: refuse to write unless the current file hashes to this."
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "edit_text_file": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Replace one exact substring inside a text file. Refuses if old_text is absent or appears more than once.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path inside the approved workspace."
+          },
+          "old_text": {
+            "type": "string",
+            "description": "Exact text to replace; must appear exactly once."
+          },
+          "new_text": {
+            "type": "string",
+            "description": "Replacement text (may be empty to delete)."
+          },
+          "expected_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Optional hash guard."
+          }
+        },
+        "required": [
+          "path",
+          "old_text",
+          "new_text"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "append_text_file": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Add text to the end of a file without replacing what is there.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "File path inside the approved workspace."
+          },
+          "content": {
+            "type": "string",
+            "description": "Text to append."
+          },
+          "expected_sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$",
+            "description": "Optional hash guard."
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "run_git": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Read-only git status for a repository in the workspace. The action is fixed: this tool can never reach history, the index or a remote.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Repository path inside the approved workspace."
+          },
+          "action": {
+            "type": "string",
+            "const": "status",
+            "description": "Always \"status\"; any other value is refused."
+          }
+        },
+        "required": [
+          "path",
+          "action"
+        ],
+        "additionalProperties": false
+      },
+      "gated": false
+    },
+    "run_python": {
+      "runs_on": "desktop",
+      "status": "advertised",
+      "description": "Run one Python unittest file from the workspace. The action is fixed to unittest, and the test file name must match ^test_[A-Za-z0-9_]+\\.py$ so it can name no path and no flag.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory inside the approved workspace."
+          },
+          "action": {
+            "type": "string",
+            "const": "unittest",
+            "description": "Always \"unittest\"."
+          },
+          "test_file": {
+            "type": "string",
+            "pattern": "^test_[A-Za-z0-9_]+\\.py$",
+            "description": "Test file name only, no path."
+          }
+        },
+        "required": [
+          "path",
+          "action",
+          "test_file"
         ],
         "additionalProperties": false
       },

@@ -130,6 +130,8 @@ class RegistryEngine:
                 "description": description,
                 "parameters": parameters,
             },
+            "runs_on": entry.get("runs_on"),
+            "gated": bool(entry.get("gated", False)),
         }
 
     def get_sanctuary_specs(self) -> Dict[str, EngineEntry]:
