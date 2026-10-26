@@ -98,7 +98,7 @@ class RegistryEngine:
         # Sort by name for deterministic prompt injection
         for name in sorted(reg["tools"].keys()):
             t = reg["tools"][name]
-            if t.get("status") != "advertised" or not t.get("description"):
+            if t.get("status") != "advertised":
                 continue
             
             out.append(self._generate_schema(name, t))
@@ -112,12 +112,13 @@ class RegistryEngine:
         # Currently treats all registered args as strings; 
         # extensible to handle type-mapping in the future.
         properties = {k: {"type": "string"} for k in args}
+        description = entry.get("description") or name.replace("_", " ").strip()
         
         return {
             "type": "function",
             "function": {
                 "name": name,
-                "description": entry.get("description", ""),
+                "description": description,
                 "parameters": {
                     "type": "object",
                     "properties": properties,
