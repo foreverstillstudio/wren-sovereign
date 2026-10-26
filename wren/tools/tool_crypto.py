@@ -65,7 +65,7 @@ def _b64url_decode(text: str) -> bytes:
 def _load_or_create_key() -> Ed25519PrivateKey:
     if os.path.exists(_KEY_PATH):
         with open(_KEY_PATH, "rb") as fh:
-            return Ed25519PrivateKey.from_pem(fh.read())
+            return serialization.load_pem_private_key(fh.read(), password=None)
     key = Ed25519PrivateKey.generate()
     os.makedirs(os.path.dirname(_KEY_PATH), exist_ok=True)
     with open(_KEY_PATH, "wb") as fh:
