@@ -1588,7 +1588,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "git_checkout": {
       "runs_on": "desktop",
@@ -1613,7 +1613,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "git_branch": {
       "runs_on": "desktop",
@@ -1645,7 +1645,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "git_merge": {
       "runs_on": "desktop",
@@ -1670,7 +1670,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "git_push": {
       "runs_on": "desktop",
@@ -1697,7 +1697,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "git_pull": {
       "runs_on": "desktop",
@@ -1724,7 +1724,7 @@
         ],
         "additionalProperties": false
       },
-      "gated": true
+      "gated": false
     },
     "query_local_database": {
       "runs_on": "desktop",
