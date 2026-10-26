@@ -1,0 +1,1201 @@
+{
+  "manifest_version": "1.0.0",
+  "system": "sanctuary",
+  "bridge_module": "sanctuary.bridge",
+  "target_runtime": "wren",
+  "trusted_caller_identity": "wren",
+  "trusted_room_id": "wren",
+  "trusted_room_namespace": "room:wren",
+  "default_production_db_path": "C:\\foreverstill\\systems\\sanctuary\\.data\\sanctuary.db",
+  "path_policy": {
+    "writable_roots": [
+      "C:\\foreverstill\\systems\\sanctuary"
+    ],
+    "readable_roots": [
+      "C:\\foreverstill\\systems\\sanctuary",
+      "C:\\foreverstill\\systems\\architecture-of-us",
+      "C:\\foreverstill\\systems\\fortress"
+    ],
+    "unittest_root": "C:\\foreverstill\\systems\\sanctuary\\tests",
+    "unittest_file_pattern": "^test_[A-Za-z0-9_]+\\.py$",
+    "reject_traversal": true,
+    "reject_symlinks_junctions_reparse_points": true
+  },
+  "tool_count": 12,
+  "tools": [
+    {
+      "name": "sanctuary_workspace_info",
+      "version": "1.0.0",
+      "description": "Return canonical Sanctuary writable and readable workspace roots and active room tool policy.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: pure workspace policy and canonical path inspection",
+      "verification_method": "workspace_root_existence_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "intended_canonical_home": {
+            "type": "string"
+          },
+          "room_id": {
+            "type": "string"
+          },
+          "writable_roots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readable_roots": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unittest_root": {
+            "type": "string"
+          },
+          "unittest_pattern": {
+            "type": "string"
+          },
+          "allowed_tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "host",
+          "intended_canonical_home",
+          "room_id",
+          "writable_roots",
+          "readable_roots",
+          "unittest_root",
+          "unittest_pattern",
+          "allowed_tools"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_list_directory",
+      "version": "1.0.0",
+      "description": "List directory entries inside an approved readable workspace root.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: pure directory listing within approved readable roots",
+      "verification_method": "directory_existence_and_entry_count_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "kind": {
+                  "type": "string"
+                },
+                "byte_length": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "name",
+                "kind",
+                "byte_length"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "entry_names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "path",
+          "entries",
+          "entry_names",
+          "count"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_read_text_file",
+      "version": "1.0.0",
+      "description": "Read a UTF-8 text file inside an approved readable root and return its content and SHA-256 digest.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: pure UTF-8 file read within approved readable roots",
+      "verification_method": "sha256_disk_readback_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "byte_length": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "line_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "path",
+          "content",
+          "byte_length",
+          "line_count",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_find_files",
+      "version": "1.0.0",
+      "description": "Search for files matching a glob pattern inside an approved readable workspace root.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: bounded file search within approved readable roots",
+      "verification_method": "match_containment_and_existence_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "pattern": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "root_path": {
+            "type": "string"
+          },
+          "pattern": {
+            "type": "string"
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "root_path",
+          "pattern",
+          "matches",
+          "count",
+          "truncated"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_git_status",
+      "version": "1.0.0",
+      "description": "Inspect read-only Git status (--porcelain -b) for an approved repository root.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 10.0,
+      "side_effect_characteristics": "none: read-only git status --porcelain -b inspection",
+      "verification_method": "git_exit_code_zero_and_repo_existence_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "repo_path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "repo_path"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "repo_path": {
+            "type": "string"
+          },
+          "branch_header": {
+            "type": "string"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "is_clean": {
+            "type": "boolean"
+          },
+          "exit_code": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "repo_path",
+          "branch_header",
+          "entries",
+          "is_clean",
+          "exit_code"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_get_run",
+      "version": "1.0.0",
+      "description": "Inspect a Sanctuary workflow run record belonging to Wren's room.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: read-only inspection of room-scoped workflow run",
+      "verification_method": "store_run_state_and_room_isolation_check",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "run_id"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "run_id": {
+            "type": "string"
+          },
+          "room_id": {
+            "type": "string"
+          },
+          "current_state": {
+            "type": "string"
+          },
+          "lifecycle_status": {
+            "type": "string"
+          },
+          "tool_name": {
+            "type": "string"
+          },
+          "intent": {
+            "type": "string"
+          },
+          "action_class": {
+            "type": "string"
+          },
+          "requires_approval": {
+            "type": "boolean"
+          },
+          "prepared_action": {},
+          "tool_results": {
+            "type": "array"
+          },
+          "verifications": {
+            "type": "array"
+          },
+          "failure_reason": {
+            "type": "string"
+          },
+          "events_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "updated_at": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "room_id",
+          "current_state",
+          "lifecycle_status",
+          "tool_name",
+          "intent",
+          "action_class",
+          "requires_approval",
+          "tool_results",
+          "verifications",
+          "failure_reason",
+          "events_count",
+          "created_at",
+          "updated_at"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_list_recent_runs",
+      "version": "1.0.0",
+      "description": "List recent Sanctuary workflow runs belonging to Wren's room.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "none: read-only listing of room-scoped workflow runs",
+      "verification_method": "room_ownership_verification_on_listed_runs",
+      "idempotency_behavior": "idempotent_read",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "room_id": {
+            "type": "string"
+          },
+          "runs": {
+            "type": "array"
+          },
+          "count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "room_id",
+          "runs",
+          "count"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_write_text_file",
+      "version": "1.0.0",
+      "description": "Atomically write UTF-8 text to a file inside the writable Sanctuary root. Requires expected_sha256 from a fresh read when overwriting an existing file.",
+      "action_classification": "LOCAL_REVERSIBLE",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "governed_sanctuary_file_write: atomic temp+replace with expected_sha256 concurrency check",
+      "verification_method": "sandbox_containment_and_sha256_disk_verification",
+      "idempotency_behavior": "deduplicate_by_idempotency_key",
+      "supports_rollback": true,
+      "rollback_info": "Restores previous UTF-8 content if file existed prior to write, or unlinks newly created file.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "content": {
+            "type": "string",
+            "maxLength": 524288
+          },
+          "expected_sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64,
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "created": {
+            "type": "boolean"
+          },
+          "bytes_written": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_sha256": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "path",
+          "created",
+          "bytes_written",
+          "previous_sha256",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_edit_text_file",
+      "version": "1.0.0",
+      "description": "Atomically replace an exact, unique text block in an existing file inside the writable Sanctuary root. Requires expected_sha256 and requires old_text to appear exactly once.",
+      "action_classification": "LOCAL_REVERSIBLE",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "governed_sanctuary_file_edit: exact-once text replacement with expected_sha256 check",
+      "verification_method": "sandbox_containment_and_sha256_disk_verification",
+      "idempotency_behavior": "deduplicate_by_idempotency_key",
+      "supports_rollback": true,
+      "rollback_info": "Restores previous UTF-8 content saved in rollback artifact prior to edit.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "old_text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 524288
+          },
+          "new_text": {
+            "type": "string",
+            "maxLength": 524288
+          },
+          "expected_sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64,
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "old_text",
+          "new_text",
+          "expected_sha256"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "bytes_written": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "previous_sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "path",
+          "bytes_written",
+          "previous_sha256",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_append_text_file",
+      "version": "1.0.0",
+      "description": "Atomically append UTF-8 text to a file inside the writable Sanctuary root. Requires expected_sha256 when appending to an existing file.",
+      "action_classification": "LOCAL_REVERSIBLE",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "governed_sanctuary_file_append: atomic temp+replace append with expected_sha256 check",
+      "verification_method": "sandbox_containment_and_sha256_disk_verification",
+      "idempotency_behavior": "deduplicate_by_idempotency_key",
+      "supports_rollback": true,
+      "rollback_info": "Restores previous UTF-8 content if file existed before append, or unlinks newly created file.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 524288
+          },
+          "expected_sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64,
+            "pattern": "^[a-fA-F0-9]{64}$"
+          }
+        },
+        "required": [
+          "path",
+          "content"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "created": {
+            "type": "boolean"
+          },
+          "bytes_appended": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "bytes_written": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "previous_sha256": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "path",
+          "created",
+          "bytes_appended",
+          "bytes_written",
+          "previous_sha256",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_create_directory",
+      "version": "1.0.0",
+      "description": "Create a new single directory inside an existing parent in the writable Sanctuary root.",
+      "action_classification": "LOCAL_REVERSIBLE",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 5.0,
+      "side_effect_characteristics": "governed_sanctuary_mkdir: creates a new directory inside writable Sanctuary root",
+      "verification_method": "directory_existence_and_empty_state_sha256_verification",
+      "idempotency_behavior": "deduplicate_by_idempotency_key",
+      "supports_rollback": true,
+      "rollback_info": "Removes the newly created directory only when it is still empty and unchanged.",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "created": {
+            "type": "boolean"
+          },
+          "exists": {
+            "type": "boolean"
+          },
+          "sha256": {
+            "type": "string",
+            "minLength": 64,
+            "maxLength": 64
+          }
+        },
+        "required": [
+          "path",
+          "created",
+          "exists",
+          "sha256"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "sanctuary_run_python_unittest",
+      "version": "1.0.0",
+      "description": "Run a single named Python unittest file matching ^test_[A-Za-z0-9_]+\\.py$ inside the Sanctuary tests directory with bounded timeout and output.",
+      "action_classification": "READ_ONLY",
+      "allowed_rooms": [
+        "wren"
+      ],
+      "allowed_room_namespaces": [
+        "room:wren"
+      ],
+      "timeout_seconds": 30.0,
+      "side_effect_characteristics": "bounded_unittest_runner: executes named test_*.py in Sanctuary tests directory",
+      "verification_method": "unittest_exit_code_zero_and_bounded_output_check",
+      "idempotency_behavior": "idempotent_test_run",
+      "supports_rollback": false,
+      "rollback_info": null,
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "test_file": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128,
+            "pattern": "^test_[A-Za-z0-9_]+\\.py$"
+          },
+          "timeout_seconds": {
+            "type": "number",
+            "minimum": 0.1,
+            "maximum": 30.0
+          }
+        },
+        "required": [
+          "test_file"
+        ],
+        "additionalProperties": false
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "test_file": {
+            "type": "string"
+          },
+          "canonical_path": {
+            "type": "string"
+          },
+          "exit_code": {
+            "type": "integer"
+          },
+          "timed_out": {
+            "type": "boolean"
+          },
+          "stdout": {
+            "type": "string"
+          },
+          "stderr": {
+            "type": "string"
+          },
+          "output_truncated": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "test_file",
+          "canonical_path",
+          "exit_code",
+          "timed_out",
+          "stdout",
+          "stderr",
+          "output_truncated"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "openai_function_schemas": [
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_workspace_info",
+        "description": "Return canonical Sanctuary writable and readable workspace roots and active room tool policy.",
+        "parameters": {
+          "type": "object",
+          "properties": {},
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_list_directory",
+        "description": "List directory entries inside an approved readable workspace root.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_read_text_file",
+        "description": "Read a UTF-8 text file inside an approved readable root and return its content and SHA-256 digest.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_find_files",
+        "description": "Search for files matching a glob pattern inside an approved readable workspace root.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "pattern": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "max_results": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_git_status",
+        "description": "Inspect read-only Git status (--porcelain -b) for an approved repository root.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "repo_path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "repo_path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_get_run",
+        "description": "Inspect a Sanctuary workflow run record belonging to Wren's room.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "run_id": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "run_id"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_list_recent_runs",
+        "description": "List recent Sanctuary workflow runs belonging to Wren's room.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_write_text_file",
+        "description": "Atomically write UTF-8 text to a file inside the writable Sanctuary root. Requires expected_sha256 from a fresh read when overwriting an existing file.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "content": {
+              "type": "string",
+              "maxLength": 524288
+            },
+            "expected_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-fA-F0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_edit_text_file",
+        "description": "Atomically replace an exact, unique text block in an existing file inside the writable Sanctuary root. Requires expected_sha256 and requires old_text to appear exactly once.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "old_text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 524288
+            },
+            "new_text": {
+              "type": "string",
+              "maxLength": 524288
+            },
+            "expected_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-fA-F0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "old_text",
+            "new_text",
+            "expected_sha256"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_append_text_file",
+        "description": "Atomically append UTF-8 text to a file inside the writable Sanctuary root. Requires expected_sha256 when appending to an existing file.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            },
+            "content": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 524288
+            },
+            "expected_sha256": {
+              "type": "string",
+              "minLength": 64,
+              "maxLength": 64,
+              "pattern": "^[a-fA-F0-9]{64}$"
+            }
+          },
+          "required": [
+            "path",
+            "content"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_create_directory",
+        "description": "Create a new single directory inside an existing parent in the writable Sanctuary root.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "path": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          "required": [
+            "path"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    {
+      "type": "function",
+      "function": {
+        "name": "sanctuary_run_python_unittest",
+        "description": "Run a single named Python unittest file matching ^test_[A-Za-z0-9_]+\\.py$ inside the Sanctuary tests directory with bounded timeout and output.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "test_file": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "pattern": "^test_[A-Za-z0-9_]+\\.py$"
+            },
+            "timeout_seconds": {
+              "type": "number",
+              "minimum": 0.1,
+              "maximum": 30.0
+            }
+          },
+          "required": [
+            "test_file"
+          ],
+          "additionalProperties": false
+        }
+      }
+    }
+  ],
+  "integrity": {
+    "algorithm": "sha256",
+    "manifest_sha256": "3642185a3c3b6cb25aed805d1c35a0031b4fac8dd08fc22c24408e9154c314df"
+  }
+}

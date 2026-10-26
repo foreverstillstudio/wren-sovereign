@@ -1,0 +1,26 @@
+# Secrets - never commit
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Runtime logs
+*.log
+
+# Runtime data (spend / audit / arg shapes)
+*.jsonl
+*.lock
+
+# Runtime stores
+data/
+archive/
+conversation_store.json
+tool_call_store.json
+last_composed.json
+
+# Editors / OS
+.vscode/
+.DS_Store
+Thumbs.db
