@@ -444,7 +444,21 @@
     "audio_format_converter": { "runs_on": "desktop", "description": "Convert audio files (WAV to MP3/OGG)", "status": "advertised" },
     "family_milestone_log": { "runs_on": "sanctuary", "description": "Log a child's milestone to the family ledger", "status": "advertised" },
     "kids_activity_scheduler": { "runs_on": "sanctuary", "description": "Plan and track kids' activities/appointments", "status": "advertised" },
-    "focus_mode_toggle": { "runs_on": "desktop", "description": "Enable/Disable work-mode distraction blocking", "status": "advertised" }
+    "focus_mode_toggle": { "runs_on": "desktop", "description": "Enable/Disable work-mode distraction blocking", "status": "advertised" },
+    "list_comfyui_workflows": { "runs_on": "desktop", "description": "List saved ComfyUI workflow templates", "status": "advertised" },
+    "read_comfyui_workflow": { "runs_on": "desktop", "description": "Read a ComfyUI workflow's nodes, prompts and parameters", "status": "advertised" },
+    "run_comfyui_workflow": { "runs_on": "desktop", "description": "Submit a workflow to ComfyUI /prompt and start it", "status": "advertised" },
+    "get_comfyui_queue": { "runs_on": "desktop", "description": "Read the ComfyUI job queue (running and pending)", "status": "advertised" },
+    "get_comfyui_history": { "runs_on": "desktop", "description": "Fetch finished ComfyUI jobs and their output image IDs", "status": "advertised" },
+    "list_comfyui_models": { "runs_on": "desktop", "description": "List ComfyUI checkpoints, LoRAs, VAEs and embeddings", "status": "advertised" },
+    "list_comfyui_nodes": { "runs_on": "desktop", "description": "List available ComfyUI node types", "status": "advertised" },
+    "save_comfyui_workflow": { "runs_on": "desktop", "description": "Save or export a ComfyUI workflow JSON", "status": "advertised" },
+    "edit_comfyui_workflow": { "runs_on": "desktop", "description": "Swap a checkpoint/LoRA or change a prompt in a ComfyUI workflow", "status": "advertised" },
+    "upload_comfyui_image": { "runs_on": "desktop", "description": "Upload an input image to ComfyUI for img2img", "status": "advertised" },
+    "get_comfyui_output_image": { "runs_on": "desktop", "description": "Fetch a generated ComfyUI image by filename", "status": "advertised" },
+    "cancel_comfyui_job": { "runs_on": "desktop", "description": "Interrupt or remove a queued ComfyUI job", "status": "advertised" }
   },
   "version": 4
 }
+
+

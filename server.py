@@ -1100,6 +1100,36 @@ def desktop_tool_cancel():
         _audit_tool_refusal(principal, body, e)
         return _tool_error(e.reason, e.status)
 
+@app.route("/api/wren/tool-signing-key", methods=["GET"])
+@desktop_tool_guarded
+def desktop_tool_signing_key():
+    """The server's ed25519 public key — first call in the client's handshake."""
+    from wren.tools import tool_crypto
+    return jsonify(tool_crypto.server_key_info())
+
+
+@app.route("/api/wren/tool-session", methods=["POST"])
+@desktop_tool_guarded
+def desktop_tool_session():
+    """Register a desktop session (client key + workspace binding)."""
+    body = request.get_json(silent=True) or {}
+    principal = caller_context()
+    try:
+        return jsonify(tool_protocol.register_session(
+            principal["owner"], principal["auth_kind"], body))
+    except tool_protocol.ProtocolError as e:
+        _audit_tool_refusal(principal, body, e)
+        return jsonify({"error": e.reason, "status": e.status}), e.status
+
+
+@app.route("/api/wren/offered-tools", methods=["GET"])
+@desktop_tool_guarded
+def desktop_offered_tools():
+    """The tools currently offered to the model on the desktop tool route."""
+    return jsonify({"protocol": tool_protocol.PROTOCOL_VERSION,
+                    "tools": tool_protocol.active_tool_schemas()})
+
+
 @app.route("/api/wren/voice", methods=["POST"])
 @guarded
 def voice():

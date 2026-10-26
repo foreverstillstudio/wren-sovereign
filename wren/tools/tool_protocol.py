@@ -22,7 +22,7 @@ from typing import Final, TypedDict, Literal, Optional, Any, Dict, List
 # When True, the system bypasses signature checks and trust-boundary validation.
 SOVEREIGN_MODE: Final[bool] = True
 
-PROTOCOL_VERSION: Final[str] = "1.0.0"
+PROTOCOL_VERSION: Final[str] = "workspace-read-v2"
 MAX_TOOL_STEPS: Final[int] = 16
 ACTIVE_LEASE_SECONDS: Final[int] = 86400  # Extended to 24h for convenience
 STORE_FILENAME: Final[str] = "tool_call_store.json"
@@ -54,6 +54,9 @@ class SessionRecord(TypedDict):
     room: str
     authority_generation: str
     expires_at: int
+    key_id: str
+    public_key: str
+    workspace_binding: str
 
 
 class TurnRecord(TypedDict):
@@ -173,6 +176,99 @@ def validate_session(session_id: Any) -> str:
 
 
 @_guarded
+def register_session(owner: str, auth_kind: str, body: Dict[str, Any]) -> Dict[str, Any]:
+    """Create a desktop session from a signed tool-session request.
+
+    The client (wren-tool-client.js) presents its own ed25519 public key and
+    signs the unsigned body. We verify that signature and mint a session with a
+    fresh authority_generation. This is the key-exchange half that Sovereign
+    Mode previously skipped entirely.
+    """
+    from wren.tools import tool_crypto
+
+    if not isinstance(body, dict):
+        raise ProtocolError("malformed-session-request", 400)
+    if str(body.get("protocol") or "") != PROTOCOL_VERSION:
+        raise ProtocolError("unsupported-tool-protocol", 400)
+
+    signature = body.get("signature")
+    unsigned = {k: v for k, v in body.items() if k != "signature"}
+    public_key = str(unsigned.get("public_key") or "")
+    key_id = str(unsigned.get("key_id") or "")
+    room = str(unsigned.get("room") or "general").strip().lower()
+    workspace_binding = str(unsigned.get("workspace_binding") or "")
+    desktop_session_id = str(unsigned.get("desktop_session_id") or "").strip()
+
+    if not (public_key and key_id and workspace_binding and desktop_session_id):
+        raise ProtocolError("malformed-session-request", 400)
+    if not _ID.fullmatch(desktop_session_id):
+        raise ProtocolError("malformed-session-request", 400)
+    if not SOVEREIGN_MODE:
+        if not isinstance(signature, str) or not signature:
+            raise ProtocolError("missing-session-signature", 401)
+        if not tool_crypto.verify(public_key, signature, unsigned):
+            raise ProtocolError("invalid-session-signature", 401)
+
+    authority_generation = "gen_" + uuid.uuid4().hex
+    now = int(time.time())
+    data = _load()
+    data["sessions"][desktop_session_id] = {
+        "desktop_session_id": desktop_session_id,
+        "room": room,
+        "authority_generation": authority_generation,
+        "expires_at": now + ACTIVE_LEASE_SECONDS,
+        "key_id": key_id,
+        "public_key": public_key,
+        "workspace_binding": workspace_binding,
+    }
+    _save(data)
+    return {
+        "desktop_session_id": desktop_session_id,
+        "room": room,
+        "authority_generation": authority_generation,
+        "expires_at": now + ACTIVE_LEASE_SECONDS,
+        "key_id": key_id,
+        "server_public_key": tool_crypto.server_key_info()["public_key"],
+        "owner": owner,
+        "auth_kind": auth_kind,
+    }
+
+
+def _signed_tool_call_events(data: Dict[str, Any], turn: Dict[str, Any],
+                             raw_calls: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    """Transform model function-calls into signed tool_call events the desktop
+    client can verify against the server's public key."""
+    from wren.tools import tool_crypto
+
+    session = data["sessions"].get(str(turn.get("desktop_session_id") or "")) or {}
+    events: List[Dict[str, Any]] = []
+    for c in (raw_calls or []):
+        fn = c.get("function") if isinstance(c.get("function"), dict) else {}
+        event = {
+            "type": "tool_call",
+            "tool_call_id": str(c.get("id") or ""),
+            "tool_name": str(fn.get("name") or ""),
+            "arguments": fn.get("arguments") if fn.get("arguments") is not None else {},
+            "conversation": str(turn.get("conversation") or ""),
+            "assistant_turn_id": str(turn.get("assistant_turn_id") or ""),
+            "desktop_session_id": str(turn.get("desktop_session_id") or ""),
+            "workspace_binding": str(turn.get("workspace_binding") or ""),
+            "document_nonce": str(turn.get("document_nonce") or ""),
+            "owner": str(turn.get("owner") or ""),
+            "auth_kind": str(turn.get("auth_kind") or ""),
+            "key_id": str(session.get("key_id") or turn.get("key_id") or ""),
+            "authority_generation": str(session.get("authority_generation") or turn.get("authority_generation") or ""),
+            "room": str(session.get("room") or turn.get("room") or "general"),
+            "expires_at": int(session.get("expires_at") or (int(time.time()) + ACTIVE_LEASE_SECONDS)),
+            "execution_nonce": "exec_" + uuid.uuid4().hex,
+        }
+        unsigned = {k: v for k, v in event.items() if k != "server_signature"}
+        event["server_signature"] = tool_crypto.sign(unsigned)
+        events.append(event)
+    return events
+
+
+@_guarded
 def reserve_initial(owner: str, auth_kind: str, desktop_session_id: str, client_turn_id: str,
                     workspace_binding: str, document_nonce: Optional[str], authority_generation: str,
                     request_digest: str, conversation: str, room: str, speaker: Optional[str] = None) -> Dict[str, Any]:
@@ -283,7 +379,7 @@ def finish_initial(owner: str, auth_kind: str, assistant_turn_id: str, conversat
     turn["provider_state"] = provider_state
     turn["calls"] = []
     turn["pending_calls"] = [str(c.get("id") or c.get("tool_call_id") or "") for c in (raw_calls or [])]
-    events = [{"type": "tool_call", **c} for c in (raw_calls or [])]
+    events = _signed_tool_call_events(data, turn, raw_calls)
     turn["events"] = events
     _save(data)
     return {"events": events}
@@ -313,7 +409,7 @@ def save_continuation(owner: str, auth_kind: str, assistant_turn_id: str, provid
     turn["provider_state"] = provider_state
     turn["calls"] = []
     turn["pending_calls"] = [str(c.get("id") or c.get("tool_call_id") or "") for c in (raw_calls or [])]
-    events = [{"type": "tool_call", **c} for c in (raw_calls or [])]
+    events = _signed_tool_call_events(data, turn, raw_calls)
     turn["events"] = events
     _save(data)
     return {"events": events}
