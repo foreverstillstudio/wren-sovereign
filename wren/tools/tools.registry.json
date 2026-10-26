@@ -386,7 +386,32 @@
     },
     "find_files": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "advertised",
+      "gated": false,
+      "description": "Search for files matching a glob pattern inside the approved workspace.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Root directory inside the approved workspace."
+          },
+          "pattern": {
+            "type": "string",
+            "description": "Glob pattern to match, e.g. '**/*.py'."
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Maximum matches (default 200)."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
     },
     "find_project_conversations": {
       "runs_on": "sanctuary",
@@ -478,7 +503,22 @@
     },
     "list_directory": {
       "runs_on": "desktop",
-      "status": "advertised"
+      "status": "advertised",
+      "gated": false,
+      "description": "List directory entries inside the approved workspace.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Directory path inside the approved workspace."
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "additionalProperties": false
+      }
     },
     "list_local_models": {
       "runs_on": "desktop",
