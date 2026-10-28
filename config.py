@@ -70,6 +70,13 @@ MODEL_MAP = {
     # provider.is_local_engine() checks both spellings; it computes on Ollama's
     # servers and is NOT vault-approved. No vision flag: image input unverified.
     "Ollama Cloud: GLM 5.3 Flash":    {"model": "glm-5.3-flash:cloud",   "vibe": "The Quickhand", "raw": True},
+    # Ember's model (Chrissy, 2026-10-27). Ollama Cloud DeepSeek Flash — routed
+    # via the local Ollama API like the other :cloud tags.
+    # vision: VERIFIED live 2026-10-27 (two probes through Ollama's native
+    # /api/chat: read "7391" from a digits fixture, then "a red circle ...
+    # digits 52" from a shape+digits fixture). Images reach it as a sibling
+    # `images` base64 array — provider._ollama_messages does that translation.
+    "Ollama Cloud: DeepSeek V4.1 Flash": {"model": "deepseek-v4.1-flash:cloud", "vibe": "The Flash", "raw": True, "vision": True},
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
