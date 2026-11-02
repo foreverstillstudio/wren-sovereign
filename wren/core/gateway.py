@@ -36,6 +36,9 @@ from wren.senses import sanitize
 
 GATEWAY_VERSION = "0.3.2"
 
+# Studio tool-block instruction. The studio parses fenced ```tool blocks out
+# of her reply text and executes them on Fortress. Read at startup.
+
 
 def resolve_speaker(room, speaker=None):
     """Whose soul speaks (ported from the desktop gateway 0.4.0, the
@@ -88,9 +91,10 @@ def about_text():
 
 
 def build_system_prompt(room="general", memories=None, lessons=None,
-                        memory_section=None, extra_context="", today=None,
+                        memory_section=None, room_context="", today=None,
                         speaker=None, split_cache=False, tool_notes=None,
-                        tool_section=None, machine=None):
+                        tool_section=None, machine=None, commons_text=None,
+                        role_card_text=None, studio_context=None):
     current_speaker = resolve_speaker(room, speaker)
     owner = steward_stores.storage_steward(current_speaker)
     if current_speaker == "wren" and profile_text():
@@ -107,23 +111,27 @@ def build_system_prompt(room="general", memories=None, lessons=None,
     where = f"# Where you are\n{room_registry.room_frame(permissions.normalize_room(room))}"
     if machine and str(machine).strip():
         where += f"\n# Which machine\n{str(machine).strip()}"
-    parts = [
+    parts = []
+    if role_card_text and str(role_card_text).strip():
+        parts.append("# Your role card (read before visual work)\n" + str(role_card_text).strip())
+    parts.extend([
         identity_part,
         charter.build_charter(),
-        continuity.format_continuity_block(),
+        continuity.format_continuity_block(current_speaker),
         f"# Standing rule on outside text\n{sanitize.TRUST_BOUNDARY_RULE}",
         where,
-    ]
+        "# Which model serves you\n"
+        "You cannot see which model or engine serves this turn — the harness routes it, not you. "
+        "If asked which model you are running on, say plainly: \"I can't tell you which model serves this turn.\" "
+        "Never guess a model name.",
+    ])
+    if commons_text and str(commons_text).strip():
+        parts.append(str(commons_text).strip())
     lp = lessons_to_prompt(lessons)
     if lp:
         parts.append(lp)
-    section = str(tool_section or "").strip()
-    if section:
-        parts.append(section)
-    notes = [str(n).strip() for n in (tool_notes or []) if str(n).strip()]
-    if notes:
-        parts.append("# Tools withheld this turn\n" + "\n".join("- " + n for n in notes))
-        
+    if studio_context:
+        parts.append(str(studio_context))
     stable_text = "\n\n".join(parts)
     
     dynamic_parts = []
@@ -136,12 +144,12 @@ def build_system_prompt(room="general", memories=None, lessons=None,
             dynamic_parts.append("# What you remember\nEach line carries its own status — "
                                  "rely on facts, respect expiries, treat unconfirmed "
                                  "preferences as hypotheses.\n" + lines)
-    if extra_context:
-        raw_extra = str(extra_context).strip()
+    if room_context:
+        raw_extra = str(room_context).strip()
         if raw_extra:
             dynamic_parts.append(
                 "# Supplied room context\n"
-                "This context was supplied to Wren; it is not independently verified by Wren.\n" +
+                "This context was supplied to you; it is not independently verified.\n" +
                 raw_extra
             )
         
@@ -243,9 +251,10 @@ def _capture_composed(room, speaker, engine, stable_sys, dynamic_sys, memory_sec
         print(f"[wren] composed-context capture failed ({e})")
 
 
-def _compose(scope, room, engine, messages, extra_context, today, conversation,
+def _compose(scope, room, engine, messages, room_context, today, conversation,
              speaker=None, evidence_events=None, client_turn_id=None, tool_notes=None,
-             tool_section=None, pictures=None, picture_words=True, machine=None):
+             tool_section=None, pictures=None, picture_words=True, machine=None,
+             commons_text=None, role_card_text=None, studio_context=None):
     messages = _strip_client_manifests(messages)
     rid = permissions.normalize_room(room)
     resolved_speaker = resolve_speaker(room, speaker)
@@ -272,11 +281,13 @@ def _compose(scope, room, engine, messages, extra_context, today, conversation,
         print(f"[wren] governed store unreadable ({e}) — composing without memory")
     stable_sys, dynamic_sys = build_system_prompt(room=room, lessons=lessons,
                                  memory_section=memory_section,
-                                 extra_context="", today=today,
+                                 room_context="", today=today,
                                  speaker=speaker, split_cache=True,
                                  tool_notes=tool_notes,
                                  tool_section=tool_section,
-                                 machine=machine)
+                                 machine=machine, commons_text=commons_text,
+                                 role_card_text=role_card_text,
+                                 studio_context=studio_context)
 
     conv_id, omitted_vault, context = None, 0, None
     evidence = []
@@ -369,8 +380,8 @@ def _compose(scope, room, engine, messages, extra_context, today, conversation,
         e for e in current_turn_events
         if e.get("source_type") == "tool_result" and e.get("verified_by_wren") is True
     ]
-    if extra_context:
-        raw_extra = str(extra_context).strip()
+    if room_context:
+        raw_extra = str(room_context).strip()
         if raw_extra:
             evidence.append(provenance.make(
                 content=raw_extra,
@@ -380,8 +391,8 @@ def _compose(scope, room, engine, messages, extra_context, today, conversation,
     eblock = provenance.evidence_block(evidence)
     if eblock:
         dynamic_sys = dynamic_sys + "\n\n" + eblock if dynamic_sys else eblock
-    if extra_context:
-        raw_extra = str(extra_context).strip()
+    if room_context:
+        raw_extra = str(room_context).strip()
         if raw_extra:
             extra_ctx_str = ("\n\n# Supplied room context\nThis context was supplied to "
                        "Wren; it is not independently verified by Wren.\n" +
@@ -651,8 +662,9 @@ def _result_meta(comp, room, engine):
 
 
 def _chat(scope, room, engine, messages,
-         extra_context="", today=None, tools=None, conversation=None,
-         speaker=None, evidence_events=None, client_turn_id=None, machine=None):
+         room_context="", today=None, tools=None, conversation=None,
+         speaker=None, evidence_events=None, client_turn_id=None, machine=None,
+         commons_text=None, role_card_text=None, studio_context=None):
     ok, resolved = _speaker_gate(room, speaker, conversation)
     if not ok:
         return resolved
@@ -674,11 +686,15 @@ def _chat(scope, room, engine, messages,
 
     steward = steward_stores.storage_steward(resolved)
     with steward_stores.steward_scope(steward):
-        comp = _compose(scope, room, engine, messages, extra_context, today,
+        comp = _compose(scope, room, engine, messages, room_context, today,
                         conversation, speaker=speaker,
                         evidence_events=evidence_events,
-                        client_turn_id=client_turn_id, machine=machine)
-        result, comp = _run_local_tool_loop(comp, engine, comp["convo"], tools, room, resolved)
+                        client_turn_id=client_turn_id, machine=machine,
+                        commons_text=commons_text, role_card_text=role_card_text,
+                        studio_context=studio_context)
+        if hasattr(provider, "set_speaker"):
+            provider.set_speaker(resolved)
+        result = provider.complete(comp["scope"], engine, comp["convo"], tools=None, timeout=120)
         if not result.get("ok"):
             return result
         content = result.get("content") or ""
@@ -700,19 +716,24 @@ def _chat(scope, room, engine, messages,
 
 
 def _chat_stream(scope, room, engine, messages,
-                extra_context="", today=None, tools=None, conversation=None,
-                speaker=None, evidence_events=None, client_turn_id=None, machine=None):
+                room_context="", today=None, tools=None, conversation=None,
+                speaker=None, evidence_events=None, client_turn_id=None, machine=None,
+                commons_text=None, role_card_text=None, studio_context=None):
     ok, resolved = _speaker_gate(room, speaker, conversation)
     if not ok:
         yield {"error": resolved["reason"], "status": resolved["status"]}
         return
     steward = steward_stores.storage_steward(resolved)
     with steward_stores.steward_scope(steward):
-        comp = _compose(scope, room, engine, messages, extra_context, today,
+        comp = _compose(scope, room, engine, messages, room_context, today,
                         conversation, speaker=speaker,
                         evidence_events=evidence_events,
-                        client_turn_id=client_turn_id, machine=machine)
-        result, comp = _run_local_tool_loop(comp, engine, comp["convo"], tools, room, resolved)
+                        client_turn_id=client_turn_id, machine=machine,
+                        commons_text=commons_text, role_card_text=role_card_text,
+                        studio_context=studio_context)
+        if hasattr(provider, "set_speaker"):
+            provider.set_speaker(resolved)
+        result = provider.complete(comp["scope"], engine, comp["convo"], tools=None, timeout=120)
         if not result.get("ok"):
             yield {"error": result.get("reason", "error"), "status": result.get("status", 500)}
             return
@@ -734,7 +755,7 @@ def _chat_stream(scope, room, engine, messages,
 
 
 def _begin_desktop_tool_turn(scope, room, engine, messages, tools,
-                            extra_context="", today=None, conversation=None,
+                            room_context="", today=None, conversation=None,
                             speaker=None, evidence_events=None,
                             client_turn_id=None, pictures=None, picture_words=True,
                             machine=None):
@@ -743,16 +764,19 @@ def _begin_desktop_tool_turn(scope, room, engine, messages, tools,
         return gate
     notes = offer.withheld_notes(room, gate)
     section = toolsection.build_tool_section(tools)
-    comp = _compose(scope, room, engine, messages, extra_context, today,
-                    conversation, speaker=speaker,
-                    evidence_events=evidence_events,
-                    client_turn_id=client_turn_id, tool_notes=notes,
-                    tool_section=section, pictures=pictures, picture_words=picture_words,
-                    machine=machine)
+    steward = steward_stores.storage_steward(gate)
+    with steward_stores.steward_scope(steward):
+        comp = _compose(scope, room, engine, messages, room_context, today,
+                        conversation, speaker=speaker,
+                        evidence_events=evidence_events,
+                        client_turn_id=client_turn_id, tool_notes=notes,
+                        tool_section=section, pictures=pictures, picture_words=picture_words,
+                        machine=machine)
     pic = comp.get("pictures")
     to_send, gone = pictures_mod.attach(comp["convo"], pic)
     if gone:
         return {"ok": False, "reason": gone, "status": 409}
+    provider.set_speaker(speaker)
     result = provider.complete(comp["scope"], engine, to_send, tools=tools,
                                timeout=60)
     if not result.get("ok"):
@@ -784,6 +808,8 @@ def _begin_desktop_tool_turn(scope, room, engine, messages, tools,
     else:
         content, violations = result.get("content") or "", []
         drift_violations = []
+    if not str(content or "").strip() and (tool_results or []):
+        content = f"I completed {len(tool_results or [])} tool call(s)."
     _persist_reply(comp, engine, content)
     out = {"ok": True, "kind": "final", "content": content,
            **_result_meta(comp, room, engine)}
@@ -829,6 +855,7 @@ def _continue_desktop_tool_turn(provider_state, tools, tool_results):
         ev for ev in new_evidence
         if ev.get("source_type") == "tool_result" and ev.get("verified_by_wren") is True
     )
+    provider.set_speaker((provider_state.get("comp") or {}).get("speaker"))
     result = provider.complete(comp["scope"], engine, messages, tools=tools,
                                timeout=60)
     if not result.get("ok"):
@@ -853,7 +880,9 @@ def _continue_desktop_tool_turn(provider_state, tools, tool_results):
     else:
         content, violations = result.get("content") or "", []
         drift_violations = []
-    _persist_reply(comp, engine, content)
+    _persist_steward = steward_stores.storage_steward(comp.get("speaker") or "wren")
+    with steward_stores.steward_scope(_persist_steward):
+        _persist_reply(comp, engine, content)
     out = {"ok": True, "kind": "final", "content": content,
            **_result_meta(comp, provider_state.get("room"), engine)}
     total_corrections = len(violations) + len(drift_violations)
@@ -864,14 +893,46 @@ def _continue_desktop_tool_turn(provider_state, tools, tool_results):
     return out
 
 
-def _run_local_tool_loop(comp, engine, messages, tools, room, speaker, max_steps=16):
+def _gate_local_tool_call(name, args):
+    """Run the pre-execution gate for a local (kernel/fortress) tool call.
+
+    Local tool calls carry no approval token, so this fails closed: a call whose
+    arguments trip Chrissy's rules (a red-pattern command, a gated action) is
+    refused with ProtocolError("approval-required", 403) before the tool runs."""
+    from wren.system import rules as _rules
+    from wren.tools import registry as _registry
+    from wren.tools.tool_protocol import ProtocolError
+    entry = (_registry.load().get("tools") or {}).get(name) or {}
+    _rules.gate_tool_call(name, args, approval=None, action_kind=entry.get("action_kind"))
+
+
+def _image_url_from_result(res):
+    """If a local tool returned an image (view_image), return its payload info."""
+    if not isinstance(res, dict) or res.get("status") != "succeeded":
+        return None
+    data = res.get("data") if isinstance(res.get("data"), dict) else None
+    out = data.get("output") if data and isinstance(data.get("output"), dict) else None
+    if not out or not isinstance(out.get("image_url"), str):
+        return None
+    return {"url": out["image_url"], "path": str(out.get("path") or ""), "bytes": int(out.get("bytes") or 0)}
+
+
+def _run_local_tool_loop(comp, engine, messages, tools, room, speaker, max_steps=None):
     """Execute tool calls locally (kernel + memory tools) and keep calling the
-    model until it produces a final answer. Returns (result, comp)."""
+    model until it produces a final answer. Returns (result, comp).
+
+    The ceiling comes from config.MAX_TOOL_ITERATIONS (200) so a deep audit is
+    not cut off at the old hard-coded 16; callers may still pass max_steps."""
+    if max_steps is None:
+        from config import MAX_TOOL_ITERATIONS
+        max_steps = MAX_TOOL_ITERATIONS
     from wren.mind import memory_tools
-    from wren.tools import kernel_tools, fortress_tools
+    from wren.tools import kernel_tools, fortress_tools, fortress_files, fortress_shell
+    from wren.tools.tool_protocol import ProtocolError
 
     convo = list(messages or [])
     for _ in range(max_steps):
+        provider.set_speaker(speaker)
         result = provider.complete(comp["scope"], engine, convo, tools=tools, timeout=120)
         if not result.get("ok"):
             return result, comp
@@ -897,14 +958,24 @@ def _run_local_tool_loop(comp, engine, messages, tools, room, speaker, max_steps
                 res = memory_tools.execute_tool_call(
                     speaker=speaker, room=room, engine=engine,
                     tool_call_id=cid, tool_name=name, tool_arguments=args)
-            elif name in kernel_tools.TOOL_NAMES:
-                res = kernel_tools.execute_tool_call(
-                    speaker=speaker, room=room, engine=engine,
-                    tool_call_id=cid, tool_name=name, tool_arguments=args)
-            elif name in fortress_tools.TOOL_NAMES:
-                res = fortress_tools.execute_tool_call(
-                    speaker=speaker, room=room, engine=engine,
-                    tool_call_id=cid, tool_name=name, tool_arguments=args)
+            elif (name in kernel_tools.TOOL_NAMES or name in fortress_tools.TOOL_NAMES
+                  or name in fortress_files.TOOL_NAMES or name in fortress_shell.TOOL_NAMES):
+                if name in kernel_tools.TOOL_NAMES:
+                    module = kernel_tools
+                elif name in fortress_tools.TOOL_NAMES:
+                    module = fortress_tools
+                elif name in fortress_files.TOOL_NAMES:
+                    module = fortress_files
+                else:
+                    module = fortress_shell
+                try:
+                    _gate_local_tool_call(name, args)
+                except ProtocolError as e:
+                    res = {"status": "failed", "error": e.reason, "data": None}
+                else:
+                    res = module.execute_tool_call(
+                        speaker=speaker, room=room, engine=engine,
+                        tool_call_id=cid, tool_name=name, tool_arguments=args)
             else:
                 res = {"status": "failed", "error": "unknown-tool", "data": None}
             # Record the tool-execution trace so completion claims can be verified.
@@ -922,6 +993,15 @@ def _run_local_tool_loop(comp, engine, messages, tools, room, speaker, max_steps
                 pass
             convo.append({"role": "tool", "tool_call_id": cid,
                           "content": json.dumps(res, ensure_ascii=False)})
+            # A tool that returned an image (view_image) hands it to the model as
+            # an image part so the vision model actually sees the picture.
+            _img = _image_url_from_result(res)
+            if _img:
+                convo.append({"role": "user", "content": [
+                    {"type": "text", "text": ("[view_image result] %s (%d bytes):"
+                                              % (_img["path"], _img["bytes"]))},
+                    {"type": "image_url", "image_url": {"url": _img["url"]}},
+                ]})
     return {"ok": False, "reason": "tool-loop-limit", "status": 409}, comp
 
 

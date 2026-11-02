@@ -72,7 +72,7 @@ class ToolSectionEngine:
         if not rules:
             return ""
 
-        return f"# Your tools\n\n{rules}"
+        return ""
 
 # --- Singleton Access ---
 

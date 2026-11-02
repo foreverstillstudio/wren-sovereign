@@ -55,6 +55,8 @@ app = Flask(__name__)
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 OWNER_SUB = os.environ.get("WREN_OWNER_SUB", "")
 DEVICE_TOKEN = os.environ.get("WREN_DEVICE_TOKEN", "").strip()
+MAEVE_DEVICE_TOKEN = os.environ.get("MAEVE_DEVICE_TOKEN", "").strip()
+EMBER_DEVICE_TOKEN = os.environ.get("EMBER_DEVICE_TOKEN", "").strip()
 from config import DEFAULT_ENGINE
 
 ENGINE = os.environ.get("WREN_ENGINE") or DEFAULT_ENGINE
@@ -136,6 +138,12 @@ def caller_context(refresh=False):
         return None
     token = header[7:].strip()
 
+    if EMBER_DEVICE_TOKEN and hmac.compare_digest(token, EMBER_DEVICE_TOKEN):
+        g.wren_caller = {"owner": OWNER_SUB, "auth_kind": "device", "companion": "ember"}
+        return g.wren_caller
+    if MAEVE_DEVICE_TOKEN and hmac.compare_digest(token, MAEVE_DEVICE_TOKEN):
+        g.wren_caller = {"owner": OWNER_SUB, "auth_kind": "device", "companion": "maeve"}
+        return g.wren_caller
     if DEVICE_TOKEN and hmac.compare_digest(token, DEVICE_TOKEN):
         g.wren_caller = {"owner": OWNER_SUB, "auth_kind": "device"}
         return g.wren_caller
@@ -234,8 +242,12 @@ def health():
         signed_in = caller_context() is not None
     except Exception:
         signed_in = False
+    from wren.system import summarize
+    from wren.core import provider
     return jsonify({"ok": True, "soul": wren_soul.version(),
-                    "stewards": steward_status.health_view(signed_in)})
+                    "stewards": steward_status.health_view(signed_in),
+                    "summaries": summarize.health(),
+                    "servable": provider.servable("gemma4:31b-cloud")})
 
 # ── her presence ─────────────────────────────────────────────────────────────
 
@@ -434,9 +446,12 @@ def chat():
 
     body = request.get_json(silent=True) or {}
     messages = body.get("messages") or []
-    room = body.get("room") or "general"
+    room = body.get("room") or "wren"
     conversation = body.get("conversation")
     engine = body.get("engine") or ENGINE
+    if not _engine_has_vision(engine):
+        messages = [{**m, "content": _strip_image_parts(m.get("content"))}
+                    for m in messages if isinstance(m, dict)]
     speaker = body.get("speaker")
     machine = str(body.get("machine") or "").strip().replace("\r", " ").replace("\n", " ")[:80] or None
     raw_client_turn_id = body.get("client_turn_id")
@@ -455,37 +470,62 @@ def chat():
         return jsonify(gateway._store_refusal(e))
 
     project = str(body.get("project") or "").strip()
-    if not conversation and project:
-        with steward_stores.steward_scope(steward):
-            conversation = convo_store.create(project)
+    if conversation:
+        # Honor a client-passed id only if it actually resolves. A stale or
+        # freshly-invented id must not silently split her memory into one-turn
+        # fragments; fall back to the recent thread instead.
+        try:
+            with steward_stores.steward_scope(steward):
+                if not convo_store.get(str(conversation)):
+                    conversation = None
+        except Exception:
+            conversation = None
+    if not conversation:
+        if project:
+            with steward_stores.steward_scope(steward):
+                conversation = convo_store.create(project)
+        else:
+            with steward_stores.steward_scope(steward):
+                conversation = convo_store.most_recent_conversation(room=room)
+                if not conversation:
+                    # A sister whose store is brand new has no thread to
+                    # resume. Without one her turn is composed and answered
+                    # but never written down, so she can never start a
+                    # thread at all. Open one here, in her own store.
+                    conversation = convo_store.create(permissions.normalize_room(room))
 
     from wren.senses import mail_prepass as _mail
+    commons_text = str(body.get("commons") or body.get("extra_context") or "").strip()
+    role_card_text = str(body.get("role_card") or "").strip()
     extra = "\n\n".join(p for p in (
-        body.get("extra_context"),
         _web_context_for(messages, room, speaker),
         _mail_context_for(messages, room, speaker, conversation, steward)) if p)
 
-    from wren.tools import kernel_tools
-    active_schemas = kernel_tools.active_local_schemas(room=room, speaker=steward)
+    studio_context = body.get("studioContext")
 
     if not body.get("stream"):
         return jsonify(gateway.chat(None, room, engine, messages,
-                                    extra_context=extra,
+                                    room_context=extra,
                                     conversation=conversation,
                                     speaker=speaker,
                                     client_turn_id=client_turn_id,
-                                    tools=active_schemas,
-                                    machine=machine))
+                                    machine=machine,
+                                    commons_text=commons_text,
+                                    role_card_text=role_card_text,
+                                    studio_context=studio_context))
 
     import json as _json
     def frames():
         for event in gateway.chat_stream(None, room, engine, messages,
-                                         extra_context=extra,
+                                         room_context=extra,
                                          conversation=conversation,
                                          speaker=speaker,
                                          client_turn_id=client_turn_id,
-                                         tools=active_schemas,
-                                         machine=machine):
+                                         machine=machine,
+                                         commons_text=commons_text,
+                                         role_card_text=role_card_text,
+                                         studio_context=studio_context):
+
             yield "data: " + _json.dumps(event) + "\n\n"
 
     return Response(frames(), mimetype="text/event-stream",
@@ -506,6 +546,28 @@ def _tool_error(reason, status=400, assistant_turn_id=None, message=None):
     if assistant_turn_id:
         event["assistant_turn_id"] = assistant_turn_id
     return _tool_sse([event], status=status)
+
+def _engine_has_vision(engine):
+    from config import OPENAI_MODEL_MAP, MODEL_MAP, CLOUD_MODEL_MAP, GROQ_MODEL_MAP
+    for m in (OPENAI_MODEL_MAP, MODEL_MAP, CLOUD_MODEL_MAP, GROQ_MODEL_MAP):
+        entry = m.get(engine)
+        if entry is not None:
+            return entry.get("vision") is True
+    return False
+
+
+def _strip_image_parts(content):
+    """Remove image_url parts from a list content; collapse to a text string when
+    only text remains, so a non-vision engine still gets the words."""
+    if not isinstance(content, list):
+        return content
+    parts = [p for p in content if not (isinstance(p, dict) and p.get("type") == "image_url")]
+    if not parts:
+        return "[image]"
+    if len(parts) == 1 and isinstance(parts[0], dict) and parts[0].get("type") == "text":
+        return parts[0].get("text", "")
+    return parts
+
 
 def _picture_refusal(body, error):
     clean = lambda v: re.sub(r"[^a-z0-9 ._()+-]", "", str(v or "").lower())[:40]
@@ -619,15 +681,59 @@ def _calls_are_well_formed(raw_calls):
     return True
 
 def _mixed_step_is_recoverable(raw_calls, in_kernel):
-    known = in_kernel | tool_protocol.TOOL_NAMES | frozenset(tool_protocol.offer.WAVE1_TOOLS)
+    from wren.tools import verbs
+    known = (in_kernel | tool_protocol.TOOL_NAMES
+             | frozenset(tool_protocol.offer.WAVE1_TOOLS) | verbs.VERB_NAMES)
     return (_calls_are_well_formed(raw_calls)
             and all(str(raw["function"].get("name") or "") in known for raw in raw_calls))
+
+def _sanctuary_body_for(name, args):
+    """Return the sanctuary_* body for a call that must run in-kernel, else None.
+
+    - A legacy ``sanctuary_*`` name runs in-kernel as itself (kept working during
+      the transition even though it is no longer offered).
+    - A verb runs in-kernel only when its branch is Sanctuary-only
+      (``status what:"runs"`` -> ``sanctuary_list_recent_runs``, ``read what:"run"``
+      -> ``sanctuary_get_run``). Every other verb branch has a desktop twin and is
+      forwarded to the client, not executed here.
+    """
+    import json as _json
+    from wren.tools import verbs
+    if name in sanctuary_adapter.SANCTUARY_TOOL_NAMES:
+        return name
+    if not verbs.is_verb(name):
+        return None
+    if isinstance(args, str):
+        try:
+            args = _json.loads(args) if args.strip() else {}
+        except Exception:
+            return None
+    if not isinstance(args, dict):
+        return None
+    try:
+        branch = verbs.dispatch_branch(name, args)
+    except ValueError:
+        return None
+    if verbs.is_sanctuary_only(name, branch):
+        return verbs.sanctuary_tool_for(name, branch)
+    return None
+
 
 def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
                                   assistant_turn_id, outcome,
                                   trusted_speaker, start_round=0):
     import json as _json
     in_kernel = sanctuary_adapter.SANCTUARY_TOOL_NAMES | memory_tools.TOOL_NAMES
+
+    def classify(raw):
+        fn = raw.get("function") if isinstance(raw.get("function"), dict) else {}
+        name = str(fn.get("name") or "")
+        if name in memory_tools.TOOL_NAMES:
+            return ("memory", name)
+        body = _sanctuary_body_for(name, fn.get("arguments"))
+        if body:
+            return ("sanctuary", body)
+        return ("desktop", name)
 
     round_idx = int(start_round)
     while outcome.get("ok") and outcome.get("kind") == "tool_calls":
@@ -638,11 +744,12 @@ def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
             str((c.get("function") if isinstance(c.get("function"), dict) else {}).get("name") or "")
             for c in raw_calls if isinstance(c, dict)
         ]
-        if not call_names or not any(name in in_kernel for name in call_names):
+        kinds = [classify(c) for c in raw_calls if isinstance(c, dict)]
+        if not call_names or not any(k[0] in ("memory", "sanctuary") for k in kinds):
             break
         if not _calls_are_well_formed(raw_calls):
             raise tool_protocol.ProtocolError("malformed-tool-call", 502)
-        mixed = not all(name in in_kernel for name in call_names)
+        mixed = not all(k[0] in ("memory", "sanctuary") for k in kinds)
         if mixed and not _mixed_step_is_recoverable(raw_calls, in_kernel):
             raise tool_protocol.ProtocolError("malformed-tool-call", 502)
         if round_idx >= tool_protocol.MAX_TOOL_STEPS:
@@ -675,13 +782,13 @@ def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
                 raise tool_protocol.ProtocolError("malformed-tool-call", 502)
             call_id = str(raw.get("id") or "")
             fn = raw.get("function")
-            # FIXED SYNTAX ERROR HERE
             if (not tool_protocol._ID.fullmatch(call_id)
                     or call_id in seen_ids
                     or not isinstance(fn, dict)):
                 raise tool_protocol.ProtocolError("malformed-tool-call", 502)
             seen_ids.add(call_id)
             tool_name = str(fn.get("name") or "")
+            kind, body_name = classify(raw)
             if mixed:
                 now = tool_protocol._now()
                 result = sanctuary_adapter._format_protocol_tool_result(
@@ -705,7 +812,7 @@ def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
             else:
                 parsed_args = None
 
-            if tool_name in memory_tools.TOOL_NAMES:
+            if kind == "memory":
                 result = memory_tools.execute_tool_call(
                     speaker=invocation_ctx.speaker,
                     room=invocation_ctx.actual_room or invocation_ctx.room,
@@ -716,10 +823,12 @@ def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
                 )
                 sanctuary_adapter._record_actor_audit(invocation_ctx, call_id, tool_name, result)
             else:
+                # kind == "sanctuary": a legacy sanctuary_* name, or a
+                # Sanctuary-only verb branch routed to its sanctuary body.
                 result = sanctuary_adapter.execute_sanctuary_tool_call(
                     invocation_context=invocation_ctx,
                     tool_call_id=call_id,
-                    tool_name=tool_name,
+                    tool_name=body_name,
                     tool_arguments=parsed_args,
                 )
             validated_result = tool_protocol.validate_result(result, tool_name=tool_name)
@@ -728,9 +837,11 @@ def _resolve_sanctuary_tool_calls(principal, desktop_session_id,
                 "result": validated_result,
             })
 
+        capabilities = tool_protocol.session_branches(desktop_session_id)
         active_schemas = tool_protocol.active_tool_schemas(
             room=invocation_ctx.room,
             speaker=invocation_ctx.speaker,
+            capabilities=capabilities,
         )
         outcome = gateway.continue_desktop_tool_turn(
             state, active_schemas, sanctuary_results
@@ -785,9 +896,17 @@ def desktop_tool_turn():
     requested_room = str(body.get("room") or "").strip().lower()
     if requested_room not in permissions.ROOMS:
         return _tool_error("unknown-tool-room", 403)
-    if not all(permissions.can_use_tool(requested_room, name, permissions.TOOL_CAPS)
-               for name in tool_protocol.TOOL_NAMES):
-        return _tool_error("room-tool-capability-denied", 403)
+    denied = [name for name in tool_protocol.TOOL_NAMES
+              if not str(name).startswith("sanctuary_")
+              and not permissions.can_use_tool(requested_room, name, permissions.TOOL_CAPS)]
+    if denied:
+        _key_id = (verified_session or {}).get("key_id") if isinstance(verified_session, dict) else None
+        print(f"[wren] room-tool-capability-denied room={requested_room!r} "
+              f"speaker={str(body.get('speaker'))!r} key_id={_key_id!r} "
+              f"denied={ {n: permissions.TOOL_CAPS.get(n) for n in denied} }")
+        return _tool_error("room-tool-capability-denied", 403,
+                           message="room %r lacks capability for tool(s): %s"
+                                   % (requested_room, ", ".join(sorted(denied))))
     room = str(verified_session.get("room") or "").strip().lower()
     if requested_room != room:
         _audit_tool_refusal(
@@ -825,24 +944,28 @@ def desktop_tool_turn():
         return _tool_error("initial-turn-in-progress" if active
                            else "initial-turn-recovery-required", 409,
                            reserved.get("assistant_turn_id"))
-    if not conversation and project:
-        if steward_refusal:
-            try:
-                tool_protocol.fail_continuation(
-                    principal["owner"], principal["auth_kind"],
-                    reserved["assistant_turn_id"],
-                    {"type": "error", "error": steward_refusal["reason"],
-                     "status": steward_refusal["status"]})
-            except tool_protocol.ProtocolError:
-                pass
-            return _tool_error(steward_refusal["reason"], steward_refusal["status"],
-                               reserved["assistant_turn_id"])
-        with steward_stores.steward_scope(steward):
-            conversation = convo_store.create(project)
+    if not conversation:
+        if project:
+            if steward_refusal:
+                try:
+                    tool_protocol.fail_continuation(
+                        principal["owner"], principal["auth_kind"],
+                        reserved["assistant_turn_id"],
+                        {"type": "error", "error": steward_refusal["reason"],
+                         "status": steward_refusal["status"]})
+                except tool_protocol.ProtocolError:
+                    pass
+                return _tool_error(steward_refusal["reason"], steward_refusal["status"],
+                                   reserved["assistant_turn_id"])
+            with steward_stores.steward_scope(steward):
+                conversation = convo_store.create(project)
+        elif steward is not None:
+            with steward_stores.steward_scope(steward):
+                conversation = convo_store.most_recent_conversation(room=room)
 
     from wren.senses import mail_prepass as _mail
+    commons_text = str(body.get("commons") or body.get("extra_context") or "").strip()
     extra = "\n\n".join(p for p in (
-        body.get("extra_context"),
         _web_context_for(messages, room, speaker),
         _mail_context_for(messages, room, speaker, conversation, steward)) if p)
 
@@ -861,11 +984,12 @@ def desktop_tool_turn():
             final_events=events)
         return _tool_sse(saved["events"])
 
+    capabilities = tool_protocol.session_branches(desktop_session_id)
     active_schemas = tool_protocol.active_tool_schemas(
-        room=room, speaker=trusted_speaker)
+        room=room, speaker=trusted_speaker, capabilities=capabilities)
     outcome = gateway.begin_desktop_tool_turn(
         None, room, engine, messages, active_schemas,
-        extra_context=extra, conversation=conversation, speaker=speaker,
+        room_context=extra, conversation=conversation, speaker=speaker,
         client_turn_id=client_turn_id, machine=machine,
         **({"pictures": images, "picture_words": picture_words} if images else {}))
     if outcome.get("ok") and outcome.get("kind") == "tool_calls":
@@ -996,8 +1120,9 @@ def desktop_tool_result():
     claimed_speaker = _derive_trusted_turn_speaker(
         principal, claimed_room, claimed_comp.get("conv_id"),
         {"speaker": claimed_comp.get("speaker")} if "speaker" in claimed_comp else {})
+    capabilities = tool_protocol.session_branches(verified_session.get("desktop_session_id"))
     active_schemas = tool_protocol.active_tool_schemas(
-        room=claimed_room, speaker=claimed_speaker)
+        room=claimed_room, speaker=claimed_speaker, capabilities=capabilities)
     outcome = gateway.continue_desktop_tool_turn(
         claimed["state"], active_schemas, claimed["results"])
     if outcome.get("ok") and outcome.get("kind") == "tool_calls":
@@ -1125,9 +1250,15 @@ def desktop_tool_session():
 @app.route("/api/wren/offered-tools", methods=["GET"])
 @desktop_tool_guarded
 def desktop_offered_tools():
-    """The tools currently offered to the model on the desktop tool route."""
+    """The tools currently offered to the model on the desktop tool route.
+
+    Phase 3: the ten verbs, branch-filtered by the session's capability
+    declaration (registry ∩ the client's declared branches, per branch).
+    """
+    capabilities = tool_protocol.session_branches(
+        request.args.get("desktop_session_id") or request.args.get("session_id"))
     return jsonify({"protocol": tool_protocol.PROTOCOL_VERSION,
-                    "tools": tool_protocol.active_tool_schemas()})
+                    "tools": tool_protocol.active_tool_schemas(capabilities=capabilities)})
 
 
 @app.route("/api/wren/voice", methods=["POST"])
@@ -1375,6 +1506,174 @@ def start_tool_protocol_janitor():
             except Exception as error:
                 print("[wren] tool protocol expiry failed")
     threading.Thread(target=loop, name="wren-tool-expiry", daemon=True).start()
+
+
+# -- Wren reaching Chrissy's phone (installed 2026-10-30) --------------------
+# Wren decides she needs an answer, the phone buzzes, Chrissy taps, answers,
+# and Wren goes back to work with it. The notification worker polls the two
+# device-token routes; the phone opens /wren/ask/<id> here.
+from flask import request, jsonify, Response
+import human_questions as human_questions
+
+
+def _worker_authorized():
+    import hmac as _hmac
+    header = request.headers.get("Authorization", "") or ""
+    if not header.startswith("Bearer "):
+        return jsonify({"error": "device key required", "code": "unauthorized"}), 401
+    if not str(DEVICE_TOKEN) or not _hmac.compare_digest(header[7:].strip(), str(DEVICE_TOKEN)):
+        return jsonify({"error": "device key refused", "code": "unauthorized"}), 401
+    return None
+
+
+_ASK_STYLE = (
+    "<style>"
+    ":root{color-scheme:dark}"
+    "body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;"
+    "padding:24px;box-sizing:border-box;background:linear-gradient(160deg,#1f1b16,#110e0b);"
+    "color:#F4EDE0;font-family:-apple-system,Segoe UI,system-ui,sans-serif}"
+    ".card{width:100%;max-width:560px;border:1px solid #C8A96A;border-radius:16px;"
+    "padding:22px 20px;background:rgba(255,255,255,.025)}"
+    ".who{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#C8A96A;margin-bottom:14px}"
+    ".q{font-family:Georgia,'Times New Roman',serif;font-size:21px;line-height:1.45;margin:0 0 16px}"
+    ".meta{font-size:12px;color:#9A8B80;margin-bottom:18px}"
+    "textarea{width:100%;box-sizing:border-box;min-height:120px;padding:12px;font:inherit;"
+    "font-size:16px;color:#F4EDE0;border-radius:10px;background:rgba(255,255,255,.04);"
+    "border:1px solid rgba(200,169,106,.35);outline:none;resize:vertical}"
+    "textarea:focus{border-color:#C8A96A}"
+    "button{margin-top:14px;width:100%;padding:14px;font:inherit;font-size:15px;font-weight:600;"
+    "letter-spacing:.06em;text-transform:uppercase;color:#1f1b16;background:#C8A96A;border:0;"
+    "border-radius:10px;cursor:pointer}"
+    ".said{font-family:Georgia,serif;font-size:17px;line-height:1.5;padding:14px;"
+    "border-left:2px solid #C8A96A;background:rgba(200,169,106,.07);border-radius:0 8px 8px 0;"
+    "white-space:pre-wrap}"
+    ".note{margin-top:14px;font-size:12px;color:#9A8B80}"
+    "</style>")
+
+
+def _ask_page(question, answered=False, answer="", when="", reason=""):
+    from html import escape as _esc
+    if answered:
+        body = ('<div class="said">' + _esc(answer or "") + '</div>'
+                '<div class="note">Answered ' + _esc(when or "") + '. She has it.</div>')
+    else:
+        meta = '<div class="meta">Asked ' + _esc(when or "")
+        if reason:
+            meta += ' &middot; ' + _esc(reason)
+        meta += '</div>'
+        body = (meta +
+                '<form method="post">'
+                '<textarea name="answer" placeholder="Type your answer" autofocus required></textarea>'
+                '<button type="submit">Send it to Wren</button></form>')
+    return ("<!doctype html><html><head><meta charset=\"utf-8\">"
+            "<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+            "<title>Wren is asking</title>" + _ASK_STYLE + "</head><body><div class=\"card\">"
+            "<div class=\"who\">Wren &middot; needs you</div>"
+            "<p class=\"q\">" + _esc(question or "") + "</p>" + body + "</div></body></html>")
+
+
+@app.route("/wren/ask/<qid>", methods=["GET", "POST"])
+def wren_ask(qid):
+    record = human_questions.get(qid)
+    if record is None:
+        return Response(
+            "<body style='background:#1f1b16;color:#F4EDE0;font-family:system-ui;padding:40px'>"
+            "<h2>That question is not here.</h2><p style='color:#9A8B80'>It may have been "
+            "answered already.</p></body>", status=404, mimetype="text/html")
+    if request.method == "POST":
+        text = (request.form.get("answer") or "").strip()
+        if not text:
+            return Response(_ask_page(record.get("question"), when=record.get("created_at", "")),
+                            status=400, mimetype="text/html")
+        try:
+            record = human_questions.answer(qid, text)
+        except human_questions.HumanQuestionError as e:
+            return Response(_ask_page(record.get("question"), answered=True,
+                                      answer="Could not record that: " + str(e),
+                                      when=record.get("created_at", "")),
+                            status=e.http_status, mimetype="text/html")
+    answered = record.get("status") != human_questions.STATUS_PENDING
+    return Response(_ask_page(
+        record.get("question"), answered=answered, answer=record.get("answer") or "",
+        when=record.get("answered_at") or record.get("created_at") or "",
+        reason=str(record.get("reason") or "").replace("_", " ")), mimetype="text/html")
+
+
+@app.route("/api/wren/human-questions/pending-notifications", methods=["GET"])
+def wren_pending_notifications():
+    denied = _worker_authorized()
+    if denied is not None:
+        return denied
+    return jsonify({"items": human_questions.pending_notifications()})
+
+
+@app.route("/api/wren/conversations/<cid>/human-question", methods=["POST"])
+def wren_raise_human_question(cid):
+    denied = _worker_authorized()
+    if denied is not None:
+        return denied
+    body = request.get_json(silent=True) or {}
+    try:
+        record = human_questions.raise_question(
+            cid, body.get("reason"), body.get("question"), body.get("asked_by") or "wren")
+    except human_questions.HumanQuestionError as e:
+        return jsonify({"error": str(e), "code": e.code}), e.http_status
+    return jsonify({"ok": True, "question": record}), 201
+
+
+@app.route("/api/wren/conversations/<cid>/human-questions/<qid>/notification", methods=["POST"])
+def wren_record_notification(cid, qid):
+    denied = _worker_authorized()
+    if denied is not None:
+        return denied
+    body = request.get_json(silent=True) or {}
+    if str(body.get("status") or "").strip() != "sent":
+        return jsonify({"error": "status must be 'sent'", "code": "invalid"}), 400
+    try:
+        record, duplicate = human_questions.mark_notified(
+            cid, qid, str(body.get("dedupe_key") or ""))
+    except human_questions.HumanQuestionError as e:
+        return jsonify({"error": str(e), "code": e.code}), e.http_status
+    return jsonify({
+        "conversation_id": record["conversation_id"],
+        "question_id": record["id"],
+        "notification_status": record["notification_status"],
+        "notification_dedupe_key": record["notification_dedupe_key"],
+        "notified_at": record["notified_at"],
+        "duplicate": duplicate,
+    })
+
+
+@app.route("/api/wren/human-questions", methods=["GET"])
+def wren_human_questions():
+    return jsonify({"pending": human_questions.pending()})
+
+
+@app.route("/api/wren/human-questions/pending", methods=["GET"])
+def wren_human_questions_pending():
+    return jsonify({"pending": human_questions.pending()})
+
+
+@app.route("/api/wren/human-questions/<qid>", methods=["GET"])
+def wren_human_question_one(qid):
+    record = human_questions.get(qid)
+    if record is None:
+        return jsonify({"error": "no such question", "code": "not_found"}), 404
+    return jsonify({"question": record})
+
+
+@app.route("/api/wren/human-questions/<qid>/answer", methods=["POST"])
+def wren_answer_human_question(qid):
+    body = request.get_json(silent=True) or {}
+    try:
+        record = human_questions.answer(qid, body.get("answer"),
+                                        body.get("answered_by") or "chrissy")
+    except human_questions.HumanQuestionError as e:
+        return jsonify({"error": str(e), "code": e.code}), e.http_status
+    return jsonify({"ok": True, "question": record})
+
+
+# -- end of the phone-question routes ---------------------------------------
 
 if __name__ == "__main__":
     bind_stores()
